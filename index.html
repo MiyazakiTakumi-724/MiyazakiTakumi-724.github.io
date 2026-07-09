@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>宮崎卓己 | Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base: #0C0F16;
+    --bg-panel: #131824;
+    --bg-panel-2: #1A2130;
+    --accent-gold: #E8B34C;
+    --accent-teal: #4FD1C5;
+    --text-primary: #F0F2F4;
+    --text-muted: #8B93A1;
+    --line: #262E3C;
+    --grid-line: rgba(139,147,161,0.055);
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+  body{
+    margin:0;
+    background:
+      linear-gradient(var(--grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid-line) 1px, transparent 1px),
+      radial-gradient(900px 500px at 85% -5%, rgba(232,179,76,0.06), transparent 60%),
+      var(--bg-base);
+    background-size: 44px 44px, 44px 44px, auto, auto;
+    color: var(--text-primary);
+    font-family: 'Inter', 'Zen Kaku Gothic New', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1,h2,h3{ font-family: 'Zen Kaku Gothic New', 'Space Grotesk', sans-serif; }
+  .mono{ font-family: 'JetBrains Mono', monospace; }
+  .muted{ color: var(--text-muted); }
+  a{ color: inherit; text-decoration: none; }
+  ::selection{ background: var(--accent-gold); color: #14181f; }
+
+  .wrap{ max-width: 1040px; margin: 0 auto; padding: 0 28px; }
+
+  /* ---------- NAV ---------- */
+  nav{
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(12,15,22,0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content: space-between;
+    padding: 17px 28px; max-width: 1040px; margin: 0 auto;
+  }
+  .nav-brand{
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; letter-spacing: 0.02em; font-size: 15px;
+  }
+  .nav-brand .dot{ color: var(--accent-gold); }
+  .nav-links{
+    display:flex; gap: 30px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px; color: var(--text-muted);
+  }
+  .nav-links a{ letter-spacing: 0.06em; }
+  .nav-links a .n{ color: var(--accent-gold); margin-right: 5px; font-size: 10.5px; }
+  .nav-links a:hover{ color: var(--text-primary); }
+
+  /* ---------- SECTION COMMON ---------- */
+  section{ padding: 90px 0; position: relative; }
+  section + section{ border-top: 1px solid var(--line); }
+  .section-head{
+    display:flex; align-items: baseline; gap: 18px;
+    margin-bottom: 48px;
+  }
+  .section-head .num{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; color: var(--accent-gold);
+    letter-spacing: 0.1em;
+  }
+  .section-head .num::before{ content: "+ "; color: var(--text-muted); }
+  .section-head h2{ font-size: 30px; margin: 0; font-weight: 900; }
+  .section-head .en{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--text-muted);
+    letter-spacing: 0.2em; margin-left: auto;
+  }
+
+  /* ---------- ABOUT (top) ---------- */
+  #about{ padding: 100px 0 90px; }
+  .about-name-block{ position: relative; margin-bottom: 52px; }
+  .ghost-name{
+    position: absolute;
+    top: -34px; left: -6px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(60px, 11vw, 130px);
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(139,147,161,0.16);
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; letter-spacing: 0.08em;
+    color: var(--accent-teal);
+    border: 1px solid rgba(79,209,197,0.35);
+    padding: 5px 12px; border-radius: 999px;
+    margin-bottom: 26px;
+    position: relative; z-index: 1;
+  }
+  .eyebrow::before{
+    content: ""; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent-teal); display:inline-block;
+    animation: pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.25; } }
+  .about-name-block h1{
+    position: relative; z-index: 1;
+    font-size: clamp(40px, 6.5vw, 68px);
+    font-weight: 900;
+    margin: 0 0 18px;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+  }
+  .about-name-block h1 .accent{ color: var(--accent-gold); }
+  .about-tagline{
+    position: relative; z-index: 1;
+    font-size: clamp(17px, 2.4vw, 22px);
+    font-weight: 700;
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    color: var(--text-primary);
+    margin: 0;
+  }
+  .about-tagline .underline{
+    background-image: linear-gradient(transparent 62%, rgba(232,179,76,0.38) 62%);
+  }
+
+  .about-grid{
+    display:grid; grid-template-columns: 1.15fr 0.85fr;
+    gap: 56px; align-items: start;
+  }
+  .about-grid p{
+    color: var(--text-muted); line-height: 2.05;
+    font-size: 15.5px; margin: 0;
+  }
+  .fact-list{
+    margin-top: 26px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+  }
+  .fact{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--text-muted);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 14px;
+  }
+  .fact b{ color: var(--text-primary); font-weight: 500; }
+
+  .skill-panel{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px;
+  }
+  .skill-panel .label{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.16em;
+    color: var(--accent-gold);
+    margin-bottom: 18px;
+  }
+  .skill{
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    gap: 12px; align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .skill:last-child{ border-bottom: none; }
+  .skill .k{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10.5px; letter-spacing: 0.08em;
+    color: var(--accent-teal);
+  }
+
+  /* ---------- PRODUCTS ---------- */
+  .pcard{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .pcard:hover{ border-color: rgba(232,179,76,0.45); }
+  .pcard.featured{
+    padding: 30px;
+    display:flex; gap: 36px;
+    margin-bottom: 24px;
+  }
+  .pcard-copy{ flex: 1.05; display:flex; flex-direction:column; }
+  .pcard-visual{ flex: 0.95; display:flex; align-items:stretch; }
+  .badge{
+    display:inline-block;
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px; letter-spacing: 0.08em;
+    color: var(--accent-teal);
+    border: 1px solid rgba(79,209,197,0.3);
+    padding: 4px 10px; border-radius: 999px;
+    margin-bottom: 14px; width: fit-content;
+  }
+  .pcard h3{ font-size: 22px; margin: 0 0 12px; font-weight: 900; }
+  .pcard p{ color: var(--text-muted); font-size: 14.5px; line-height: 1.85; margin: 0 0 18px; }
+  .stack{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 20px; }
+  .stack span{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--text-muted);
+    border: 1px solid var(--line);
+    padding: 3px 9px; border-radius: 6px;
+  }
+  .links{ margin-top: auto; display:flex; gap: 18px; font-size: 13.5px; }
+  .links a{ color: var(--accent-gold); border-bottom: 1px solid transparent; }
+  .links a:hover{ border-color: var(--accent-gold); }
+
+  .pgrid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+  .pcard.placeholder{
+    border-style: dashed;
+    padding: 34px 26px;
+    display:flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    text-align: center;
+    color: var(--text-muted);
+    min-height: 170px;
+  }
+  .pcard.placeholder:hover{ border-color: var(--line); }
+  .pcard.placeholder .pnum{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; color: var(--accent-gold);
+    opacity: 0.7; margin-bottom: 10px;
+  }
+  .pcard.placeholder h4{
+    font-family: 'Zen Kaku Gothic New', sans-serif;
+    font-weight: 700; font-size: 16px;
+    color: var(--text-muted); margin: 0 0 6px;
+  }
+  .pcard.placeholder small{ font-size: 12.5px; opacity: 0.75; }
+
+  /* ---------- SIMULATOR ---------- */
+  .sim{
+    width: 100%;
+    background: var(--bg-panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 20px;
+    display:flex; flex-direction: column;
+  }
+  .sim-title{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent-teal);
+    letter-spacing: 0.1em; margin-bottom: 4px;
+  }
+  .sim-sub{ font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+  .sim-row{
+    display:flex; align-items:center; gap: 10px;
+    padding: 7px 0; font-size: 14px;
+  }
+  .sim-row .who{ min-width: 44px; }
+  .sim-row input{
+    flex: 1; min-width: 0;
+    background: var(--bg-base);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    padding: 8px 12px;
+    text-align: right;
+    outline: none;
+    transition: border-color .15s ease;
+  }
+  .sim-row input:focus{ border-color: var(--accent-teal); }
+  .sim-row .yen-label{ color: var(--text-muted); font-size: 12px; }
+  .sim-meta{
+    font-family:'JetBrains Mono', monospace;
+    font-size: 11.5px; color: var(--text-muted);
+    padding: 12px 0 6px;
+    border-top: 1px dashed var(--line);
+    margin-top: 10px;
+  }
+  .sim-out{ margin-top: 8px; }
+  .sim-transfer{
+    display:flex; align-items:center; gap: 10px;
+    font-size: 14px; padding: 9px 12px;
+    background: var(--bg-base);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin-bottom: 8px;
+    animation: slideIn .25s ease both;
+  }
+  @keyframes slideIn{ from{ opacity:0; transform: translateX(-8px);} to{ opacity:1; transform:none; } }
+  .sim-transfer .arr{ color: var(--accent-teal); font-family:'JetBrains Mono', monospace; }
+  .sim-transfer .amt{
+    margin-left: auto;
+    font-family:'JetBrains Mono', monospace;
+    font-weight: 700; color: var(--accent-gold);
+  }
+  .sim-done{
+    text-align: center; padding: 14px;
+    color: var(--accent-teal); font-size: 14px;
+    border: 1px dashed rgba(79,209,197,0.4);
+    border-radius: 8px;
+  }
+
+  /* ---------- CONTACT ---------- */
+  #contact{ border-top: 1px solid var(--line); padding: 90px 0 0; }
+  .contact-inner{
+    text-align: center;
+    padding-bottom: 80px;
+  }
+  .contact-inner .lead-en{
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: clamp(34px, 6vw, 58px);
+    font-weight: 700;
+    margin: 0 0 14px;
+    letter-spacing: -0.01em;
+  }
+  .contact-inner .lead-en .accent{ color: var(--accent-gold); }
+  .contact-inner p{
+    color: var(--text-muted); font-size: 15px;
+    margin: 0 0 36px;
+  }
+  .contact-btns{
+    display:flex; justify-content: center; gap: 16px; flex-wrap: wrap;
+  }
+  .btn{
+    padding: 13px 26px; border-radius: 8px;
+    font-size: 14px; font-weight: 600;
+    border: 1px solid var(--line);
+    transition: all .18s ease;
+    font-family: 'Inter', 'Zen Kaku Gothic New', sans-serif;
+  }
+  .btn-primary{ background: var(--accent-gold); color: #16130A; border-color: var(--accent-gold); }
+  .btn-primary:hover{ filter: brightness(1.08); transform: translateY(-1px); }
+  .btn-ghost{ font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .btn-ghost:hover{ border-color: var(--text-muted); background: var(--bg-panel); }
+
+  .copyright{
+    border-top: 1px solid var(--line);
+    padding: 26px 0 30px;
+    text-align: center;
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.08em;
+  }
+
+  /* ---------- RESPONSIVE / MOTION ---------- */
+  @media (max-width: 860px){
+    .about-grid{ grid-template-columns: 1fr; gap: 34px; }
+    .pcard.featured{ flex-direction: column; }
+    .pgrid{ grid-template-columns: 1fr; }
+    .nav-links{ gap: 18px; }
+    .nav-links a .n{ display: none; }
+    .ghost-name{ top: -22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  .fade-up{ opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .fade-up.in{ opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <div class="nav-brand">宮崎卓己<span class="dot">.</span>dev</div>
+    <div class="nav-links">
+      <a href="#about"><span class="n">01</span>About</a>
+      <a href="#products"><span class="n">02</span>Products</a>
+      <a href="#contact"><span class="n">03</span>Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ========== 01 ABOUT ========== -->
+<section id="about">
+  <div class="wrap">
+    <div class="about-name-block fade-up in">
+      <div class="ghost-name" aria-hidden="true">TAKUMI MIYAZAKI</div>
+      <span class="eyebrow">WEB DEVELOPER / JOB HUNTING</span>
+      <h1>宮崎 卓己<span class="accent">.</span></h1>
+      <p class="about-tagline">
+        身近な<span class="underline">「めんどくさい」</span>を、コードで小さく解決する。
+      </p>
+    </div>
+
+    <div class="about-grid">
+      <div class="fade-up in">
+        <p>
+          はじめまして、宮崎卓己です。20歳で、現在Web開発職を目指して就職活動をしています。
+          個人開発では、実際に使った経験から生まれた「小さいけれど確実に役立つ」アプリを作るのが好きで、
+          フロントエンドの実装だけでなく、データの整理・状態設計にもこだわって作っています。
+          何よりも大切にしているのは「誰が・なんのために使うのか」を徹底的に考えること。
+          機能ひとつひとつを、使う人の場面と目的から逆算して設計しています。
+        </p>
+        <div class="fact-list">
+          <span class="fact">AGE <b>20</b></span>
+          <span class="fact">BASE <b>JAPAN</b></span>
+          <span class="fact">STYLE <b>個人開発 / フルスタック</b></span>
+        </div>
+      </div>
+      <div class="skill-panel fade-up in">
+        <div class="label">SKILLS</div>
+        <div class="skill"><span class="k">LANG</span><span>JavaScript / Java / C / Python</span></div>
+        <div class="skill"><span class="k">FE</span><span>Next.js / React</span></div>
+        <div class="skill"><span class="k">CSS</span><span>Tailwind CSS</span></div>
+        <div class="skill"><span class="k">DB</span><span>Prisma / SQLite</span></div>
+        <div class="skill"><span class="k">AUTH</span><span>Auth.js (Google OAuth)</span></div>
+        <div class="skill"><span class="k">TOOL</span><span>Git / GitHub</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 02 PRODUCTS ========== -->
+<section id="products">
+  <div class="wrap">
+    <div class="section-head fade-up">
+      <span class="num">02</span>
+      <h2>制作物</h2>
+      <span class="en">PRODUCTS</span>
+    </div>
+
+    <div class="pcard featured fade-up">
+      <div class="pcard-copy">
+        <span class="badge">MAIN PRODUCT</span>
+        <h3>旅行費用精算アプリ</h3>
+        <p>
+          旅行中に発生した立て替え費用をプロジェクトの参加者ごとに記録し、未清算の支払いだけを対象に
+          「誰が誰にいくら払えば精算が完了するか」を最小限の送金回数で自動計算して表示するアプリです。
+          Googleログインと招待URLだけで参加者を追加でき、割り勘計算を手動でやる面倒さと、
+          LINEでの端数トラブルをなくすために開発しました。
+        </p>
+        <div class="stack">
+          <span>Next.js</span><span>Auth.js</span><span>Prisma</span><span>Tailwind CSS</span>
+        </div>
+        <div class="links">
+          <a href="#">GitHubリポジトリ →</a>
+          <a href="#">デモを見る →</a>
+        </div>
+      </div>
+      <div class="pcard-visual">
+        <div class="sim">
+          <div class="sim-title">SETTLE-UP SIMULATOR</div>
+          <div class="sim-sub">↓ 金額を書き換えると、最小送金がその場で再計算されます</div>
+          <div class="sim-row"><span class="who">田中</span><input type="number" id="pay0" value="12000" min="0" step="100" aria-label="田中の支払額"><span class="yen-label">円</span></div>
+          <div class="sim-row"><span class="who">佐藤</span><input type="number" id="pay1" value="3000" min="0" step="100" aria-label="佐藤の支払額"><span class="yen-label">円</span></div>
+          <div class="sim-row"><span class="who">鈴木</span><input type="number" id="pay2" value="5400" min="0" step="100" aria-label="鈴木の支払額"><span class="yen-label">円</span></div>
+          <div class="sim-meta" id="simMeta"></div>
+          <div class="sim-out" id="simOut"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pgrid">
+      <div class="pcard placeholder fade-up">
+        <div class="pnum">02</div>
+        <h4>準備中</h4>
+        <small>近日追加予定</small>
+      </div>
+      <div class="pcard placeholder fade-up">
+        <div class="pnum">03</div>
+        <h4>準備中</h4>
+        <small>構想中</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 03 CONTACT ========== -->
+<section id="contact">
+  <div class="wrap contact-inner fade-up">
+    <h2 class="lead-en">Let's work <span class="accent">together</span>.</h2>
+    <p>面接・カジュアル面談など、お気軽にご連絡ください。</p>
+    <div class="contact-btns">
+      <a class="btn btn-primary" href="mailto:example@example.com">メールを送る</a>
+      <a class="btn btn-ghost" href="#">GitHub →</a>
+      <a class="btn btn-ghost" href="#">X (Twitter) →</a>
+    </div>
+  </div>
+  <div class="copyright">© 2026 Takumi Miyazaki — Built with HTML / CSS / JavaScript</div>
+</section>
+
+<script>
+  // ---- 最小送金シミュレーター（アプリ本体と同じ貪欲法） ----
+  const people = ['田中', '佐藤', '鈴木'];
+  const inputs = people.map((_, i) => document.getElementById('pay' + i));
+  const metaEl = document.getElementById('simMeta');
+  const outEl = document.getElementById('simOut');
+
+  function yen(n){ return '¥' + Math.round(n).toLocaleString('ja-JP'); }
+
+  function calcTransfers(paid){
+    const total = paid.reduce((s, v) => s + v, 0);
+    const share = total / paid.length;
+    const bal = people.map((n, i) => ({ n, v: paid[i] - share }));
+    const transfers = [];
+    for (let guard = 0; guard < 50; guard++){
+      bal.sort((a, b) => b.v - a.v);
+      const cr = bal[0], db = bal[bal.length - 1];
+      if (cr.v < 1 || db.v > -1) break;
+      const amt = Math.min(cr.v, -db.v);
+      transfers.push({ from: db.n, to: cr.n, amt });
+      cr.v -= amt; db.v += amt;
+    }
+    return { total, share, transfers };
+  }
+
+  function render(){
+    const paid = inputs.map(el => Math.max(0, Number(el.value) || 0));
+    const { total, share, transfers } = calcTransfers(paid);
+    metaEl.textContent = 'TOTAL ' + yen(total) + ' / 1人あたり ' + yen(share);
+    outEl.innerHTML = '';
+    if (transfers.length === 0){
+      const done = document.createElement('div');
+      done.className = 'sim-done';
+      done.textContent = '精算の必要はありません 🎉';
+      outEl.appendChild(done);
+      return;
+    }
+    transfers.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'sim-transfer';
+      row.style.animationDelay = (i * 0.06) + 's';
+      row.innerHTML = '<span>' + t.from + '</span><span class="arr">→</span><span>' + t.to + '</span><span class="amt">' + yen(t.amt) + '</span>';
+      outEl.appendChild(row);
+    });
+  }
+  inputs.forEach(el => el.addEventListener('input', render));
+  render();
+
+  // ---- スクロール表示 ----
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting){
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
