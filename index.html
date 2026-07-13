@@ -253,6 +253,67 @@
   }
   .pcard.placeholder small{ font-size: 12.5px; opacity: 0.75; }
 
+  .pcard.item{
+    padding: 28px 26px;
+    display: flex; flex-direction: column;
+  }
+
+  /* ---------- MINI CANVAS ---------- */
+  .mini-canvas-wrap{
+    background: var(--bg-panel-2);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 20px;
+  }
+  .mc-head{
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 10px;
+  }
+  .mc-title{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; color: var(--accent-teal);
+    letter-spacing: 0.1em;
+  }
+  .mc-swatches{ display: flex; gap: 6px; margin-left: auto; }
+  .mc-swatch{
+    width: 18px; height: 18px; border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer; padding: 0;
+    transition: transform .12s ease;
+  }
+  .mc-swatch:hover{ transform: scale(1.15); }
+  .mc-swatch.active{ border-color: var(--text-primary); }
+  .mc-clear{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: none;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text-muted);
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: color .15s ease, border-color .15s ease;
+  }
+  .mc-clear:hover{ color: var(--text-primary); border-color: var(--text-muted); }
+  .mc-body{ position: relative; }
+  #mcCanvas{
+    display: block;
+    width: 100%; height: 170px;
+    background: #F7F5EF;
+    border-radius: 8px;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .mc-hint{
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12.5px; color: #9a978c;
+    pointer-events: none;
+    transition: opacity .3s ease;
+  }
+  .mc-hint.hide{ opacity: 0; }
+
   /* ---------- SIMULATOR ---------- */
   .sim{
     width: 100%;
@@ -473,10 +534,32 @@
     </div>
 
     <div class="pgrid">
-      <div class="pcard placeholder fade-up">
-        <div class="pnum">02</div>
-        <h4>準備中</h4>
-        <small>近日追加予定</small>
+      <div class="pcard item fade-up">
+        <span class="badge">PRODUCT 02</span>
+        <h3>共同お絵かき「自由帳」アプリ</h3>
+        <p>
+          複数人が同じキャンバスにリアルタイムで描き込める共同ホワイトボードアプリです。
+          ペン・図形・付箋を自由に配置でき、他の参加者のポインタも色分けして表示。
+          Socket.ioによる要素単位のリアルタイム同期と、変更が止まると自動でDBに保存される仕組みを
+          TypeScriptで型安全に実装しました。
+        </p>
+        <div class="stack">
+          <span>Next.js</span><span>TypeScript</span><span>Socket.io</span><span>Canvas API</span><span>Prisma</span>
+        </div>
+        <div class="mini-canvas-wrap">
+          <div class="mc-head">
+            <span class="mc-title">MINI CANVAS</span>
+            <span class="mc-swatches" id="mcSwatches"></span>
+            <button class="mc-clear" id="mcClear" type="button">クリア</button>
+          </div>
+          <div class="mc-body">
+            <canvas id="mcCanvas" aria-label="お試しキャンバス。ドラッグで線を描けます"></canvas>
+            <span class="mc-hint" id="mcHint">ここにドラッグして描いてみてください ✏️</span>
+          </div>
+        </div>
+        <div class="links">
+          <a href="#">GitHubリポジトリ →</a>
+        </div>
       </div>
       <div class="pcard placeholder fade-up">
         <div class="pnum">03</div>
@@ -548,6 +631,75 @@
   }
   inputs.forEach(el => el.addEventListener('input', render));
   render();
+
+  // ---- 自由帳ミニキャンバス（ペン・3px固定はアプリ本体と同じ仕様） ----
+  (function(){
+    const canvas = document.getElementById('mcCanvas');
+    const hint = document.getElementById('mcHint');
+    const swatchWrap = document.getElementById('mcSwatches');
+    const clearBtn = document.getElementById('mcClear');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#1C2230', '#E05A4E', '#E8891A', '#2E9E5B', '#3E7BD0', '#9C6ADE'];
+    let penColor = colors[0];
+    let drawing = false;
+
+    colors.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mc-swatch' + (i === 0 ? ' active' : '');
+      b.style.background = c;
+      b.setAttribute('aria-label', 'ペンの色 ' + (i + 1));
+      b.addEventListener('click', () => {
+        penColor = c;
+        swatchWrap.querySelectorAll('.mc-swatch').forEach(el => el.classList.remove('active'));
+        b.classList.add('active');
+      });
+      swatchWrap.appendChild(b);
+    });
+
+    function resize(){
+      const ratio = window.devicePixelRatio || 1;
+      const w = Math.round(canvas.clientWidth * ratio);
+      const h = Math.round(canvas.clientHeight * ratio);
+      if (canvas.width === w && canvas.height === h) return;
+      canvas.width = w;
+      canvas.height = h;
+      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+    }
+    resize();
+    new ResizeObserver(resize).observe(canvas);
+
+    function pos(e){
+      const r = canvas.getBoundingClientRect();
+      return { x: e.clientX - r.left, y: e.clientY - r.top };
+    }
+    canvas.addEventListener('pointerdown', e => {
+      drawing = true;
+      hint.classList.add('hide');
+      canvas.setPointerCapture(e.pointerId);
+      const p = pos(e);
+      ctx.strokeStyle = penColor;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
+    });
+    canvas.addEventListener('pointermove', e => {
+      if (!drawing) return;
+      const p = pos(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+    });
+    ['pointerup', 'pointercancel'].forEach(ev =>
+      canvas.addEventListener(ev, () => { drawing = false; })
+    );
+    clearBtn.addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
+      hint.classList.remove('hide');
+    });
+  })();
 
   // ---- スクロール表示 ----
   const io = new IntersectionObserver(entries => {
