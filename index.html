@@ -4,456 +4,954 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>宮崎卓己 | Portfolio</title>
-<meta name="description" content="Web開発職を目指す宮崎卓己のポートフォリオ。身近な「めんどくさい」を、コードで小さく解決する。">
+<meta name="description" content="新卒でWeb開発職を目指す宮崎卓己のポートフォリオ。制作物を「課題・考えたこと・作ったもの・いまの状態」の順に紹介しています。">
 <meta property="og:title" content="宮崎卓己 | Portfolio">
-<meta property="og:description" content="身近な「めんどくさい」を、コードで小さく解決する。">
+<meta property="og:description" content="新卒でWeb開発職を目指す宮崎卓己のポートフォリオ。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://miyazakitakumi-724.github.io/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* 全モック共通の土台。色や書体は各テーマで変数を上書きする */
+*{ box-sizing: border-box; }
+html, body{ height: 100%; margin: 0; }
+body{
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  font-family: var(--font-body, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+button{ font: inherit; color: inherit; }
+a{ color: inherit; }
+:focus-visible{ outline: 2px solid var(--focus, var(--accent, #0060df)); outline-offset: 2px; }
+
+#desktop{ position: relative; flex: 1; min-height: 0; overflow: hidden; }
+
+/* ---------- デスクトップのアイコン ---------- */
+#icons{
+  position: absolute;
+  top: 12px; left: 12px;
+  z-index: 1;
+  display: flex; flex-direction: column; flex-wrap: wrap;
+  gap: 6px;
+  max-height: calc(100% - 24px);
+}
+.dicon{
+  appearance: none;
+  background: none; border: 0; margin: 0;
+  padding: 6px 4px;
+  width: var(--icon-w, 92px);
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+  cursor: pointer;
+  text-align: center;
+}
+.dicon-img{ width: var(--icon-size, 40px); height: var(--icon-size, 40px); display: grid; place-items: center; }
+.dicon-img svg{ width: 100%; height: 100%; }
+.dicon-label{ font-size: 12.5px; line-height: 1.35; padding: 1px 4px; overflow-wrap: anywhere; }
+
+.ic-paper{ fill: var(--icon-paper, #fff); }
+.ic-acc{ fill: var(--icon-acc, #3a6fd8); }
+.ic-acc2{ fill: var(--icon-acc2, #f2c94c); }
+.ic-stroke{ stroke: var(--icon-ink, #000); stroke-width: 2; }
+.ic-line{ fill: none; stroke: var(--icon-ink, #000); stroke-width: 2; }
+
+/* ---------- ウィンドウ ---------- */
+.win{
+  position: absolute;
+  display: flex; flex-direction: column;
+  min-width: 240px;
+  background: var(--win-bg, #fff);
+  color: var(--win-fg, #111);
+}
+.win[hidden]{ display: none; }
+.win.opening{ animation: win-in .18s ease-out; }
+@keyframes win-in{ from{ opacity: 0; transform: scale(.97); } to{ opacity: 1; transform: none; } }
+.win-bar{
+  flex: none;
+  display: flex; align-items: center; gap: 8px;
+  user-select: none;
+  touch-action: none;
+  cursor: grab;
+}
+.win.dragging .win-bar{ cursor: grabbing; }
+.win-title{ flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.win-ctrls{ flex: none; display: flex; gap: 4px; }
+.win-btn{ appearance: none; margin: 0; padding: 0; cursor: pointer; }
+.win-body{ flex: 1; min-height: 0; overflow: auto; container-type: inline-size; }
+.win.max{ left: 0 !important; top: 0 !important; width: 100% !important; height: 100% !important; }
+
+/* ---------- タイル型（並べて表示） ---------- */
+.mode-tile{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  grid-auto-rows: minmax(0, 1fr);
+  gap: var(--gap, 8px);
+  padding: var(--gap, 8px);
+}
+.mode-tile .win{ position: relative; min-height: 0; }
+.mode-tile .win.max{ position: absolute; inset: var(--gap, 8px); z-index: 50; width: auto !important; height: auto !important; }
+
+/* ---------- スマホ：ウィンドウは全画面 ---------- */
+@media (max-width: 700px){
+  .win{ left: 6px !important; top: 6px !important; width: calc(100% - 12px) !important; height: calc(100% - 12px) !important; }
+  .win-bar{ cursor: default; }
+  .mode-tile{ grid-template-columns: 1fr; grid-auto-rows: minmax(72vh, auto); overflow: auto; }
+  .mode-tile .win{ left: auto !important; top: auto !important; width: auto !important; height: auto !important; }
+}
+
+/* ---------- ウィンドウの中身 ---------- */
+.c{
+  padding: var(--pad, 22px);
+  display: flex; flex-direction: column; gap: 14px;
+  font-size: var(--fs, 15px);
+  line-height: 1.85;
+}
+.c p, .c h2, .c h3, .c dl, .c ol, .c ul{ margin: 0; }
+.c h2{ font-family: var(--font-head, inherit); font-size: var(--h2, 24px); font-weight: var(--h-weight, 900); line-height: 1.35; }
+.c h3{ font-family: var(--font-head, inherit); font-size: 15px; font-weight: var(--h-weight, 900); margin-top: 6px; }
+.c-kicker{ font-size: 13px; color: var(--accent-text, var(--accent)); font-weight: 700; }
+.c-lead{ font-weight: 700; font-size: 1.08em; }
+.c-list{ padding-left: 1.3em; }
+.c-stack{ font-size: 13px; color: var(--muted); }
+.c-dl{ display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 12px; }
+.c-dl dt{ color: var(--muted); }
+.c-dl dd{ margin: 0; }
+.c-btns{ display: flex; flex-wrap: wrap; gap: 10px; }
+.c-btn{
+  display: inline-flex; align-items: center;
+  min-height: 40px; padding: 0 16px;
+  font-size: 14px; font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--btn-fg, var(--win-fg));
+  background: var(--btn-bg, transparent);
+  border: var(--btn-border, 1.5px solid currentColor);
+  border-radius: var(--btn-radius, 999px);
+}
+.c-btn-solid{
+  background: var(--btn-solid-bg, var(--win-fg));
+  color: var(--btn-solid-fg, var(--win-bg));
+  border-color: var(--btn-solid-bg, var(--win-fg));
+}
+.c-split{ display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 22px; align-items: start; }
+.c-col{ display: flex; flex-direction: column; gap: 14px; }
+@container (max-width: 600px){ .c-split{ grid-template-columns: 1fr; } }
+.c-mail a{ font-family: var(--font-mono, monospace); font-size: clamp(16px, 5cqi, 24px); font-weight: 700; overflow-wrap: anywhere; }
+.c-progress{ list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; font-size: 12px; color: var(--muted); }
+.c-progress li{ display: flex; flex-direction: column; gap: 6px; }
+.c-progress li::before{ content: ""; height: 4px; background: var(--line); }
+.c-progress li.now{ color: var(--accent-text, var(--accent)); font-weight: 700; }
+.c-progress li.now::before{ background: var(--accent); }
+.soon-box{ border: 1.5px dashed var(--line); padding: 28px; text-align: center; font-weight: 700; letter-spacing: .1em; color: var(--muted); }
+
+/* 精算シミュレーター */
+.sim{
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 16px;
+  background: var(--sim-bg, rgba(0,0,0,.04));
+  border: var(--sim-border, 1px solid var(--line));
+  border-radius: var(--sim-radius, 10px);
+  font-size: 14px;
+}
+.sim p{ margin: 0; }
+.sim-title{ font-weight: 700; text-align: center; }
+.sim-hint{ font-size: 12px; color: var(--muted); text-align: center; }
+.sim label{ display: flex; align-items: center; gap: 8px; }
+.sim .who{ width: 40px; font-weight: 700; }
+.sim input{
+  flex: 1; min-width: 0; min-height: 36px; padding: 0 8px;
+  font: inherit; font-family: var(--font-mono, monospace); font-size: 16px; text-align: right;
+  color: var(--input-fg, var(--win-fg));
+  background: var(--input-bg, transparent);
+  border: var(--input-border, 1.5px solid var(--line));
+  border-radius: var(--input-radius, 6px);
+}
+.sim-meta{ display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); border-top: 1px dashed var(--line); padding-top: 8px; }
+.sim-out{ display: flex; flex-direction: column; gap: 6px; }
+.sim-tr{ display: flex; justify-content: space-between; font-weight: 700; }
+.sim-tr .amt, .sim-ok{ color: var(--accent-text, var(--accent)); font-family: var(--font-mono, monospace); }
+.sim-ok{ text-align: center; font-weight: 700; }
+
+/* Pop の掲示板モック */
+.pop{
+  display: flex; flex-direction: column; gap: 8px;
+  height: 232px; overflow: hidden;
+  padding: 12px;
+  background: var(--pop-bg, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--pop-radius, 12px);
+}
+.pop-tags{ display: flex; flex-wrap: wrap; gap: 6px; }
+.pop-tag{
+  min-height: 30px; padding: 0 11px;
+  font-size: 12px; cursor: pointer;
+  background: var(--tag-bg, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--tag-radius, 999px);
+}
+.pop-tag[aria-pressed="true"]{ background: var(--accent); border-color: var(--accent); color: var(--accent-fg, #fff); font-weight: 700; }
+.pop-list{ display: flex; flex-direction: column; gap: 8px; }
+.pop-item{
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 9px;
+  background: var(--pop-item-bg, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--pop-radius-sm, 10px);
+}
+.pop-thumb{ width: 36px; height: 36px; flex: none; display: grid; place-items: center; font-weight: 900; border-radius: var(--thumb-radius, 7px); background: var(--accent); color: var(--accent-fg, #fff); }
+.pop-meta{ min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.pop-title{ font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pop-sub{ font-size: 11px; color: var(--muted); }
+.pop-sub span{ margin-right: 6px; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation: none !important; transition: none !important; }
+}
+</style>
 <style>
   :root{
-    --paper: #F4F4F0;
-    --white: #FFFFFF;
-    --ink: #111418;
-    --ink-2: #3A3F47;
-    --muted: #5B616B;
-    --line: #D9D9D2;
-    --accent: #E4572E;        /* 装飾・大きい文字のみ */
-    --accent-text: #C2410C;   /* 小さい文字のアクセント */
-    --accent-soft: #F7B69F;
-
-    --sans: 'Zen Kaku Gothic New', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', sans-serif;
-    --mono: 'JetBrains Mono', ui-monospace, monospace;
+    --blue: #1d4f91; --blue-deep: #143b70; --chalk: #f4f8ff; --ink: #10233f; --muted: #5a6b82; --line: #d5deea; --sel: #e3edfb;
+    --font-body: 'IBM Plex Sans JP', sans-serif; --font-mono: 'IBM Plex Mono', monospace;
+    --win-bg: #fff; --win-fg: var(--ink);
+    --accent: #1d4f91; --accent-text: #1d4f91; --accent-fg: #fff;
+    --focus: #f0b429;
+    --btn-radius: 4px; --input-radius: 4px; --sim-radius: 4px; --pop-radius: 4px; --pop-radius-sm: 4px; --tag-radius: 4px; --thumb-radius: 4px;
+  }
+  body{ display: flex; flex-direction: column; background: var(--blue); color: var(--chalk); }
+  #desktop{
+    background:
+      linear-gradient(rgba(255,255,255,.13) 1px, transparent 1px) 0 0 / 100px 100px,
+      linear-gradient(90deg, rgba(255,255,255,.13) 1px, transparent 1px) 0 0 / 100px 100px,
+      linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px) 0 0 / 20px 20px,
+      linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px) 0 0 / 20px 20px,
+      var(--blue);
   }
 
-  *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
-  body{
-    margin: 0;
-    background: var(--paper);
-    color: var(--ink);
-    font-family: var(--sans);
-    -webkit-font-smoothing: antialiased;
+  /* 図面の表題欄 */
+  .title-block{ position: absolute; right: 18px; bottom: 18px; z-index: 0; display: grid; grid-template-columns: max-content 1fr; min-width: 330px; border: 1.5px solid var(--chalk); font-size: 13px; pointer-events: none; }
+  .title-block > *{ padding: 6px 12px; border-bottom: 1px solid rgba(244,248,255,.5); }
+  .title-block dt{ border-right: 1px solid rgba(244,248,255,.5); font-family: var(--font-mono); opacity: .8; }
+  .title-block dd{ margin: 0; font-weight: 700; }
+  .title-block dd.big{ font-size: 17px; }
+  .title-block > :nth-last-child(-n+2){ border-bottom: 0; }
+
+  #icons{ top: 24px; left: 20px; gap: 12px; }
+  .dicon{ color: var(--chalk); }
+  .dicon-img{ --icon-size: 52px; border: 1.5px dashed rgba(244,248,255,.7); border-radius: 6px; }
+  .dicon-img svg{ width: 26px; height: 26px; }
+  .dicon.selected .dicon-img{ background: rgba(255,255,255,.15); border-style: solid; }
+  .dicon.selected .dicon-label{ background: var(--chalk); color: var(--blue); }
+
+  .win{ border: 1.5px solid var(--blue-deep); border-radius: 6px; box-shadow: 0 24px 50px -24px rgba(5,15,35,.7); overflow: hidden; }
+  .win-bar{ height: 38px; padding: 0 8px 0 14px; background: #eef3fa; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 13px; color: var(--ink); }
+  .win:not(.focused) .win-bar{ color: var(--muted); }
+  .win-btn{ width: 26px; height: 24px; display: grid; place-items: center; font-size: 13px; background: #fff; border: 1px solid var(--line); border-radius: 4px; }
+  .win-btn:hover{ border-color: var(--blue); color: var(--blue); }
+
+  /* ファイルブラウザ */
+  .fx{ height: 100%; display: grid; grid-template-columns: 190px 230px minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  .fx-path{ grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 8px 14px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--muted); }
+  .fx-path b{ color: var(--ink); font-weight: 500; }
+  .fx-side, .fx-files{ overflow-y: auto; border-right: 1px solid var(--line); padding: 8px; display: flex; flex-direction: column; gap: 2px; }
+  .fx-side{ background: #f7f9fc; }
+  .fx-side .grp{ padding: 8px 8px 4px; font-size: 12px; color: var(--muted); }
+  .fx-item{ display: flex; align-items: center; gap: 8px; width: 100%; min-height: 34px; padding: 4px 8px; background: none; border: 0; border-radius: 4px; text-align: left; font-size: 14px; cursor: pointer; }
+  .fx-item svg{ width: 17px; height: 17px; flex: none; color: var(--blue); }
+  .fx-item:hover{ background: #eef3fa; }
+  .fx-item[aria-selected="true"]{ background: var(--sel); font-weight: 700; }
+  .fx-files .fx-item{ font-family: var(--font-mono); font-size: 13px; }
+  .fx-files .fx-item .st{ margin-left: auto; font-family: var(--font-body); font-size: 11.5px; color: var(--muted); }
+  .fx-preview{ overflow-y: auto; padding: 22px 26px 30px; }
+  .doc{ display: flex; flex-direction: column; gap: 12px; max-width: 62ch; font-size: 15px; line-height: 1.85; }
+  .doc > *{ margin: 0; }
+  .doc .kicker{ font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+  .doc h2{ font-size: 24px; line-height: 1.4; }
+  .doc .kv, .doc .cs-who{ display: grid; grid-template-columns: max-content 1fr; gap: 6px 18px; margin: 0; }
+  .doc .kv dt, .doc .cs-who dt{ color: var(--blue); font-weight: 700; }
+  .doc dd{ margin: 0; }
+  .doc .cs-who{ padding: 12px 14px; border-left: 3px solid var(--blue); background: #f5f8fd; }
+  .doc .cs-so{ font-size: 13px; color: var(--muted); font-weight: 700; }
+  .doc .cs-points{ padding-left: 1.2em; margin: 0; }
+  .doc .cs-points li + li{ margin-top: 4px; }
+  .doc .next{ font-size: 13.5px; color: var(--muted); }
+  .doc .next button{ background: none; border: 0; padding: 0; color: var(--blue); text-decoration: underline; cursor: pointer; font: inherit; }
+  .doc .mail{ font-family: var(--font-mono); font-size: clamp(17px, 4cqi, 24px); font-weight: 600; overflow-wrap: anywhere; }
+  .c-btn{ min-height: 38px; }
+
+  @container (max-width: 720px){
+    .fx{ grid-template-columns: 1fr; grid-template-rows: auto auto auto minmax(0, 1fr); }
+    .fx-side, .fx-files{ flex-direction: row; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+    .fx-side .grp{ display: none; }
+    .fx-item{ width: auto; flex: none; }
+    .fx-preview{ padding: 18px 18px 26px; }
   }
-  a{ color: inherit; }
-  a:hover{ color: var(--accent-text); }
-  :focus-visible{ outline: 2px solid var(--accent-text); outline-offset: 3px; }
-  ::selection{ background: var(--accent-soft); color: var(--ink); }
-  .mono{ font-family: var(--mono); }
-  .wrap{ width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 24px; }
-  .num{ font-family: var(--mono); font-weight: 700; color: var(--accent); line-height: 1; }
-  .label{ font-family: var(--mono); font-size: 12px; letter-spacing: 0.12em; color: var(--muted); }
-
-  /* ---------- HEADER ---------- */
-  .site-header{ position: sticky; top: 0; z-index: 10; background: rgba(244,244,240,0.92); backdrop-filter: blur(8px); }
-  .site-header .wrap{ display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 14px; padding-bottom: 14px; }
-  .brand{ font-weight: 900; font-size: 17px; text-decoration: none; letter-spacing: 0.04em; }
-  .brand span{ color: var(--accent); }
-  .site-nav{ display: flex; gap: 4px; flex-wrap: wrap; font-family: var(--mono); font-size: 13px; }
-  .site-nav a{ display: inline-flex; align-items: center; min-height: 44px; padding: 0 12px; text-decoration: none; }
-
-  /* ---------- HERO ---------- */
-  .hero{ padding: 72px 0 96px; }
-  .hero .wrap{ display: flex; flex-direction: column; gap: 48px; }
-  .status{ display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-family: var(--mono); font-size: 13px; }
-  .status .pill{ display: inline-flex; align-items: center; gap: 8px; background: var(--ink); color: var(--paper); padding: 7px 14px; border-radius: 999px; }
-  .status .pill::before{ content: ""; width: 7px; height: 7px; border-radius: 50%; background: #5BD18B; }
-  .status .sub{ color: var(--muted); }
-  .hero h1{ margin: 0; font-size: clamp(38px, 6.6vw, 92px); line-height: 1.12; font-weight: 900; letter-spacing: -0.02em; }
-  .hero h1 .mark{ background: linear-gradient(transparent 68%, var(--accent-soft) 68%); }
-  .hero h1 .dot{ color: var(--accent); }
-  .hero-foot{ display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 32px; border-top: 2px solid var(--ink); padding-top: 28px; }
-  .hero-name{ display: flex; flex-direction: column; gap: 6px; }
-  .hero-name strong{ font-size: 28px; font-weight: 900; }
-  .hero-foot p{ margin: 0; max-width: 34em; font-size: 16px; line-height: 1.9; color: var(--ink-2); }
-
-  /* ---------- WORK ---------- */
-  .work{ background: var(--white); border-top: 2px solid var(--ink); }
-  .section-head{ display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-top: 72px; padding-bottom: 40px; }
-  .section-head h2{ margin: 0; font-size: 44px; font-weight: 900; }
-
-  .feature{ display: flex; flex-wrap: wrap; gap: 48px; padding-top: 40px; padding-bottom: 72px; border-top: 1px solid var(--line); }
-  .feature-copy{ flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
-  .feature-copy .num{ font-size: 56px; }
-  .item-head{ display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; }
-  .feature h3{ margin: 0; font-size: 32px; font-weight: 900; line-height: 1.3; }
-  .body{ margin: 0; font-size: 16px; line-height: 1.95; color: var(--ink-2); }
-  .facts{ margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; font-size: 14px; border-top: 1px solid var(--line); padding-top: 18px; }
-  .facts dt{ font-family: var(--mono); color: var(--muted); }
-  .facts dd{ margin: 0; }
-  .btns{ display: flex; flex-wrap: wrap; gap: 12px; padding-top: 4px; }
-  .btn{ display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; font-size: 15px; font-weight: 700; text-decoration: none; border-radius: 999px; border: 1.5px solid var(--ink); transition: transform .15s ease; }
-  .btn:hover{ transform: translateY(-1px); }
-  .btn-solid{ background: var(--ink); color: var(--paper); }
-  .btn-solid:hover{ color: var(--paper); }
-
-  /* 精算シミュレーター（旅行アプリの見た目に合わせる） */
-  .sim-stage{ flex: 1 1 400px; min-width: 0; background: #EAF5FB; border-radius: 20px; padding: 36px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
-  .sim-stage .hint{ font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; color: #0B5F94; text-align: center; }
-  .sim{ width: 100%; max-width: 380px; background: #FFFFFF; padding: 26px 24px 30px; font-family: var(--mono); font-size: 14px; color: #0E2A3A; display: flex; flex-direction: column; gap: 12px; box-shadow: 0 24px 40px -26px rgba(11,116,181,0.5); }
-  .sim .title{ text-align: center; font-weight: 700; letter-spacing: 0.2em; }
-  .sim .rule{ border-top: 1px dashed #0E2A3A; }
-  .sim label{ display: flex; align-items: center; gap: 10px; }
-  .sim label .who{ width: 44px; font-family: var(--sans); font-weight: 700; }
-  .sim label .yen{ color: #456272; }
-  .sim input{ flex: 1; min-width: 0; min-height: 40px; border: 1.5px solid #9CC3D6; border-radius: 0; padding: 0 10px; font-family: inherit; font-size: 16px; text-align: right; color: #0E2A3A; background: #FFFFFF; }
-  .sim input:focus{ outline: none; border-color: #0B74B5; }
-  .sim .meta{ display: flex; justify-content: space-between; color: #456272; font-size: 13px; }
-  .sim .tr{ display: flex; justify-content: space-between; font-weight: 700; }
-  .sim .tr .amt{ color: #0B74B5; }
-  .sim .stamp{ align-self: center; border: 2px solid #0B74B5; color: #0B74B5; font-weight: 700; padding: 6px 12px; transform: rotate(-4deg); letter-spacing: 0.1em; }
-
-  .grid2{ display: grid; grid-template-columns: repeat(auto-fit, minmax(min(340px, 100%), 1fr)); gap: 48px; padding-bottom: 88px; }
-  .card{ display: flex; flex-direction: column; gap: 18px; border-top: 1px solid var(--line); padding-top: 40px; }
-  .card .num{ font-size: 40px; }
-  .card h3{ margin: 0; font-size: 24px; font-weight: 900; }
-  .card .body{ font-size: 15px; line-height: 1.9; }
-  .stack{ margin: 0; font-family: var(--mono); font-size: 13px; color: var(--muted); }
-  .text-link{ align-self: flex-start; display: inline-flex; align-items: center; min-height: 44px; font-size: 15px; font-weight: 700; }
-
-  /* Popのモック（Pop本体の配色に合わせる） */
-  .pop{ height: 260px; background: #FFFCF9; border: 1px solid #F5E6DA; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; color: #4A4643; }
-  .pop-tags{ display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 2px; }
-  .pop-tag{ min-height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid transparent; background: #EEF5F9; color: #4A6A80; font-family: var(--sans); font-size: 12px; cursor: pointer; }
-  .pop-tag[aria-pressed="true"]{ background: #F6D8C4; border-color: #F0C8AA; color: #4A4643; font-weight: 700; }
-  .pop-item{ display: flex; align-items: center; gap: 12px; background: #FFFFFF; border: 1px solid #F5E6DA; border-radius: 12px; padding: 8px 10px; animation: in .25s ease both; }
-  .pop-thumb{ width: 40px; height: 40px; flex: none; border-radius: 8px; background: #F6D8C4; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; color: #9A5A3B; }
-  .pop-meta{ min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-  .pop-title{ font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .pop-sub{ font-size: 11px; color: #6B655F; }
-  .pop-sub span{ color: #4A6A80; margin-right: 6px; }
-  @keyframes in{ from{ opacity: 0; transform: translateY(4px); } to{ opacity: 1; transform: none; } }
-
-  .progress{ list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 4px; font-size: 12px; }
-  .progress li{ display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
-  .progress li::before{ content: ""; height: 4px; background: var(--line); }
-  .progress li.now{ color: var(--accent-text); font-weight: 700; }
-  .progress li.now::before{ background: var(--accent); }
-
-  /* 制作中 */
-  .soon{ height: 260px; border: 1.5px dashed #B9B9B0; border-radius: 16px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: repeating-linear-gradient(-45deg, transparent 0 14px, rgba(17,20,24,0.03) 14px 28px); }
-  .soon span{ font-family: var(--mono); font-size: 14px; font-weight: 700; letter-spacing: 0.16em; color: var(--ink-2); }
-  .card.is-soon .num{ color: #B9B9B0; }
-  .card.is-soon h3{ color: var(--muted); }
-
-  /* ---------- ABOUT ---------- */
-  .about{ border-top: 2px solid var(--ink); }
-  .about .wrap{ display: flex; flex-wrap: wrap; gap: 56px; padding-top: 80px; padding-bottom: 88px; }
-  .about-copy{ flex: 1 1 460px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
-  .about-copy h2{ margin: 0; font-size: 44px; font-weight: 900; }
-  .about-copy p{ margin: 0; font-size: 17px; line-height: 2; color: var(--ink-2); }
-  .skills{ flex: 1 1 380px; min-width: 0; margin: 0; display: grid; grid-template-columns: 96px 1fr; font-size: 15px; border-top: 2px solid var(--ink); align-self: flex-start; }
-  .skills dt, .skills dd{ padding: 14px 0; border-bottom: 1px solid var(--line); margin: 0; }
-  .skills dt{ font-size: 13px; font-weight: 700; color: var(--accent-text); padding-top: 15px; }
-
-  /* ---------- CONTACT ---------- */
-  .contact{ background: var(--ink); color: var(--paper); }
-  .contact .wrap{ display: flex; flex-direction: column; gap: 32px; padding-top: 96px; padding-bottom: 96px; }
-  .mail{ display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--ink-2); border-bottom: 1px solid var(--ink-2); padding: 22px 0; }
-  .mail-label{ font-size: 13px; color: #A9AFB8; }
-  .mail-address{ font-family: var(--mono); font-size: clamp(20px, 3.4vw, 36px); font-weight: 700; color: var(--paper); text-decoration: none; overflow-wrap: anywhere; }
-  .mail-address:hover{ color: var(--accent-soft); }
-  .contact .label{ color: var(--accent-soft); }
-  .contact h2{ margin: 0; font-size: clamp(34px, 5.6vw, 76px); line-height: 1.2; font-weight: 900; }
-  .contact h2 span{ color: var(--accent); }
-  .contact h2 .nb{ display: inline-block; color: inherit; }
-  .contact .btn{ border-color: var(--paper); color: var(--paper); min-height: 54px; padding: 0 26px; font-family: var(--mono); font-size: 14px; }
-  .contact .btn-accent{ background: var(--accent); border-color: var(--accent); color: var(--ink); font-family: var(--sans); font-size: 16px; }
-  .contact .btn:hover{ color: var(--paper); }
-  .contact .btn-accent:hover{ color: var(--ink); }
-  .site-foot{ display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 24px; padding-bottom: 32px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
-
-  /* ---------- MOTION ---------- */
-  .reveal{ opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
-  .reveal.in{ opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior: auto; }
-    *{ animation: none !important; transition: none !important; }
-    .reveal{ opacity: 1; transform: none; }
-  }
-
-  @media (max-width: 600px){
-    .hero{ padding: 48px 0 72px; }
-    .section-head h2, .about-copy h2{ font-size: 34px; }
-    .feature-copy .num{ font-size: 44px; }
-    .feature h3{ font-size: 26px; }
+  @media (max-width: 700px){
+    .title-block{ left: 12px; right: 12px; bottom: 12px; min-width: 0; font-size: 12.5px; }
   }
 </style>
 </head>
 <body>
-
-<header class="site-header">
-  <div class="wrap">
-    <a class="brand" href="#top">宮崎卓己<span>.</span></a>
-    <nav class="site-nav" aria-label="ページ内リンク">
-      <a href="#about">自己紹介</a>
-      <a href="#work">制作物</a>
-      <a href="#contact">連絡先</a>
-    </nav>
-  </div>
-</header>
-
-<main>
-  <!-- ========== HERO ========== -->
-  <section class="hero" id="top">
-    <div class="wrap">
-      <div class="status">
-        <span class="pill">OPEN TO WORK — 新卒 Web開発職</span>
-        <span class="sub">Based in Japan / 20歳</span>
-      </div>
-      <h1>身近な<span class="mark">「めんどくさい」</span>を、<br>コードで小さく<br>解決する<span class="dot">。</span></h1>
-      <div class="hero-foot">
-        <div class="hero-name">
-          <strong>宮崎 卓己</strong>
-          <span class="label">TAKUMI MIYAZAKI — WEB DEVELOPER</span>
-        </div>
-        <p>実際に使って困った経験から、小さいけれど確実に役立つアプリを作っています。フロントエンドだけでなく、データ設計・状態設計まで一人で手を動かします。</p>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== ABOUT ========== -->
-  <section class="about" id="about">
-    <div class="wrap">
-      <div class="about-copy reveal">
-        <h2>自己紹介</h2>
-        <p>はじめまして、宮崎卓己です。20歳で、Web開発職を目指して就職活動をしています。何より大切にしているのは「誰が・なんのために使うのか」を徹底的に考えること。機能ひとつひとつを、使う人の場面と目的から逆算して設計しています。</p>
-      </div>
-      <dl class="skills reveal">
-        <dt>言語</dt><dd>TypeScript / JavaScript / Java / C / Python</dd>
-        <dt>フロント</dt><dd>Next.js / React / Tailwind CSS</dd>
-        <dt>通信</dt><dd>Socket.io（リアルタイム）</dd>
-        <dt>DB</dt><dd>Prisma / PostgreSQL / SQLite</dd>
-        <dt>認証</dt><dd>Auth.js（Google OAuth）</dd>
-        <dt>ツール</dt><dd>Git / GitHub</dd>
-      </dl>
-    </div>
-  </section>
-
-  <!-- ========== WORK ========== -->
-  <section class="work" id="work">
-    <div class="wrap section-head">
-      <h2>制作物</h2>
-      <span class="label">SELECTED WORK — 03</span>
-    </div>
-
-    <!-- 01 旅行費用精算アプリ -->
-    <article class="wrap feature">
-      <div class="feature-copy reveal">
-        <div class="item-head">
-          <span class="num">01</span>
-          <span class="label">MAIN PRODUCT · 個人開発</span>
-        </div>
-        <h3>旅行費用精算アプリ</h3>
-        <p class="body">旅行中の立て替えをプロジェクトごとに記録し、未精算分だけを対象に「誰が誰にいくら払えば終わるか」を最小限の送金回数で自動計算します。Googleログインと招待URLだけで参加でき、手計算の面倒さとLINEでの端数トラブルをなくすために作りました。</p>
-        <dl class="facts">
-          <dt>課題</dt><dd>割り勘の手計算と、誰が払ったかの記憶違い</dd>
-          <dt>工夫</dt><dd>貪欲法で送金回数を最小化 / 精算済みの支払いを計算から除外</dd>
-          <dt>STACK</dt><dd class="mono">Next.js · Auth.js · Prisma · PostgreSQL · Tailwind CSS</dd>
-        </dl>
-        <div class="btns">
-          <a class="btn btn-solid" href="https://travelproj-s7mi.onrender.com" target="_blank" rel="noopener">デモを見る ↗</a>
-          <a class="btn" href="https://github.com/MiyazakiTakumi-724/travel-app" target="_blank" rel="noopener">GitHub ↗</a>
-        </div>
-      </div>
-
-      <div class="sim-stage reveal">
-        <span class="hint">TRY IT — 金額を書き換えると再計算されます</span>
-        <div class="sim">
-          <div class="title">*** 精算シミュレーター ***</div>
-          <div class="rule"></div>
-          <label><span class="who">田中</span><span class="yen">¥</span><input type="number" inputmode="numeric" min="0" step="100" value="12000" data-pay aria-label="田中の支払額"></label>
-          <label><span class="who">佐藤</span><span class="yen">¥</span><input type="number" inputmode="numeric" min="0" step="100" value="3000" data-pay aria-label="佐藤の支払額"></label>
-          <label><span class="who">鈴木</span><span class="yen">¥</span><input type="number" inputmode="numeric" min="0" step="100" value="5400" data-pay aria-label="鈴木の支払額"></label>
-          <div class="rule"></div>
-          <div class="meta"><span id="simTotal"></span><span id="simShare"></span></div>
-          <div id="simOut" aria-live="polite" style="display: flex; flex-direction: column; gap: 12px;"></div>
-        </div>
-      </div>
-    </article>
-
-    <div class="wrap grid2">
-      <!-- 02 Pop -->
-      <article class="card reveal">
-        <div class="item-head">
-          <span class="num">02</span>
-          <span class="label">TEAM · 開発中</span>
-        </div>
-        <div class="pop" aria-label="Popの掲示板イメージ（ダミーデータ）">
-          <div class="pop-tags" id="popTags"></div>
-          <div id="popList" style="display: flex; flex-direction: column; gap: 8px;"></div>
-        </div>
-        <h3>匿名レビュー掲示板「Pop」</h3>
-        <p class="body">食べ物・商品などのレビュー（＝ポップ）を匿名で気軽に投稿でき、新着順に並ぶスマホ向けの掲示板。友人と2人のチーム開発で、私はフロントエンド主担当として一覧・詳細・投稿フォームの画面と、CSSの共通ルール作りを担当しています。featureブランチとPull Requestでお互いのコードをレビューしながら進めています。</p>
-        <ol class="progress" aria-label="開発の進捗">
-          <li class="now">仕様策定・モック</li>
-          <li>実装</li>
-          <li>デプロイ</li>
-        </ol>
-        <p class="stack">HTML / CSS / JavaScript · Java / Spring Boot · PostgreSQL · Render</p>
-        <a class="text-link" href="https://github.com/MiyazakiTakumi-724/Pop-app" target="_blank" rel="noopener">GitHub ↗</a>
-      </article>
-
-      <!-- 03 制作中 -->
-      <article class="card is-soon reveal">
-        <div class="item-head">
-          <span class="num">03</span>
-          <span class="label">IN PROGRESS · 制作中</span>
-        </div>
-        <div class="soon">
-          <svg aria-hidden="true" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#5B616B" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>
-          <span>NOW BUILDING</span>
-        </div>
-        <h3>次の作品を制作中</h3>
-        <p class="body">現在制作中です。完成したらここで公開します。</p>
-      </article>
-    </div>
-  </section>
-
-  <!-- ========== CONTACT ========== -->
-  <section class="contact" id="contact">
-    <div class="wrap">
-      <span class="label">連絡先</span>
-      <h2><span class="nb">面接・</span><span class="nb">カジュアル面談、</span><br>お気軽にどうぞ<span>。</span></h2>
-      <div class="mail">
-        <span class="mail-label">メール</span>
-        <a class="mail-address" href="mailto:miyataku724@gmail.com">miyataku724@gmail.com</a>
-      </div>
-      <div class="btns">
-        <a class="btn btn-accent" href="mailto:miyataku724@gmail.com">メールを送る</a>
-        <a class="btn" href="https://github.com/MiyazakiTakumi-724" target="_blank" rel="noopener">GitHub ↗</a>
-      </div>
-    </div>
-  </section>
-
-</main>
-
-<footer class="wrap">
-  <div class="site-foot">
-    <span>© 2026 Takumi Miyazaki</span>
-    <span>Built with HTML / CSS / JavaScript</span>
-  </div>
-</footer>
+  <main id="desktop">
+    <div id="icons"></div>
+    <dl class="title-block" aria-label="表題欄">
+      <dt>図面名</dt><dd class="big">ポートフォリオ</dd>
+      <dt>設計</dt><dd>宮崎 卓己</dd>
+      <dt>用途</dt><dd>新卒Web開発職の就職活動</dd>
+      <dt>日付</dt><dd data-date></dd>
+    </dl>
+  </main>
 
 <script>
-  // ---- 精算シミュレーター（アプリ本体と同じ貪欲法） ----
-  (function(){
-    const names = ['田中', '佐藤', '鈴木'];
-    const inputs = Array.from(document.querySelectorAll('[data-pay]'));
-    const totalEl = document.getElementById('simTotal');
-    const shareEl = document.getElementById('simShare');
-    const outEl = document.getElementById('simOut');
-    const yen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
+/* v2 共通データ：プロフィールと、制作物のケーススタディ（課題 → 考えたこと → 作ったもの → いまの状態） */
+(function(){
+  const PROFILE = {
+    name: '宮崎 卓己',
+    nameEn: 'Takumi Miyazaki',
+    tagline: '身近な「めんどくさい」を、コードで小さく解決する。',
+    status: '新卒でWeb開発職を目指して就職活動中（20歳）',
+    intro: 'はじめまして、宮崎卓己です。20歳で、Web開発職を目指して就職活動をしています。何より大切にしているのは「誰が・なんのために使うのか」を徹底的に考えること。機能ひとつひとつを、使う人の場面と目的から逆算して設計しています。',
+    skills: [
+      ['言語', 'TypeScript / JavaScript / Java / C'],
+      ['フロント', 'Next.js / React / Tailwind CSS'],
+      ['DB', 'Prisma / PostgreSQL'],
+      ['認証', 'Auth.js（Google OAuth）'],
+      ['ツール', 'Git / GitHub']
+    ],
+    email: 'miyataku724@gmail.com',
+    github: 'https://github.com/MiyazakiTakumi-724'
+  };
 
-    function render(){
-      const paid = inputs.map((el) => Math.max(0, Number(el.value) || 0));
-      const total = paid.reduce((s, v) => s + v, 0);
-      const share = total / paid.length;
-      const bal = names.map((n, i) => ({ n, v: paid[i] - share }));
-      const transfers = [];
-      for (let g = 0; g < 20; g++){
-        bal.sort((a, b) => b.v - a.v);
-        const cr = bal[0], db = bal[bal.length - 1];
-        if (cr.v < 1 || db.v > -1) break;
-        const amt = Math.min(cr.v, -db.v);
-        transfers.push({ from: db.n, to: cr.n, amt });
-        cr.v -= amt; db.v += amt;
-      }
-      totalEl.textContent = '合計 ' + yen(total);
-      shareEl.textContent = '1人 ' + yen(share);
-      outEl.replaceChildren();
-      if (transfers.length === 0){
-        const s = document.createElement('div');
-        s.className = 'stamp';
-        s.textContent = '精算不要';
-        outEl.appendChild(s);
-        return;
-      }
-      transfers.forEach((t) => {
-        const row = document.createElement('div');
-        row.className = 'tr';
-        const l = document.createElement('span');
-        l.textContent = t.from + ' → ' + t.to;
-        const r = document.createElement('span');
-        r.className = 'amt';
-        r.textContent = yen(t.amt);
-        row.append(l, r);
-        outEl.appendChild(row);
-      });
+  const CASES = [
+    {
+      id: 'travel',
+      slug: 'travel-app',
+      title: '旅行費用精算アプリ',
+      kind: '個人開発',
+      status: '公開中',
+      summary: '旅行中の立て替えを記録して、「誰が誰にいくら払えば終わるか」を自動で計算するアプリ。',
+      steps: [
+        {
+          key: '課題',
+          points: [
+            'グループ旅行では立て替えが何度も起きて、最後には「誰がいくら払ったか」が分からなくなる',
+            '割り勘の計算は手間がかかり、端数でもめやすい',
+            '友達にお金を請求するのは、どうしても気まずい'
+          ]
+        },
+        {
+          key: '考えたこと',
+          who: '旅行に参加しているメンバー全員。旅行中、外でスマホを片手に操作する場面が多い。',
+          why: '計算の手間と、お金を請求する気まずさをなくして、旅行そのものを楽しんでもらうため。',
+          points: [
+            '入力はその場で開くウィンドウで済ませ、画面の切り替えを減らした',
+            '参加はGoogleログインと招待URLだけ。アカウント作成の手間をなくした',
+            '「誰が誰にいくら払うか」はアプリが示す。自分から言い出す気まずさを減らした'
+          ]
+        },
+        {
+          key: '作ったもの',
+          points: [
+            '立て替えの記録と一覧、支払いごとの精算済みチェック',
+            '未精算の支払いだけを均等割りし、送金回数が最小になる組み合わせを計算（貪欲法）',
+            '招待URLでの参加と、初回のニックネーム設定'
+          ],
+          widget: 'sim'
+        },
+        {
+          key: 'いまの状態',
+          text: 'Vercelで公開中です。デモから実際に使えます。'
+        }
+      ],
+      stack: ['Next.js', 'Auth.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
+      links: [
+        { label: 'デモを開く', href: 'https://travel-app-xi-seven.vercel.app/' },
+        { label: 'GitHub', href: 'https://github.com/MiyazakiTakumi-724/travel-app' }
+      ]
+    },
+    {
+      id: 'pop',
+      slug: 'pop',
+      title: '匿名レビュー掲示板「Pop」',
+      kind: '友人と2人でのチーム開発',
+      status: '開発中',
+      summary: '食べ物・商品などのレビュー（＝ポップ）を匿名で気軽に投稿でき、新着順に並ぶスマホ向けの掲示板。',
+      steps: [
+        {
+          key: '課題',
+          points: [
+            '「おいしかった」「よかった」くらいの感想を、アカウント登録なしで気軽に共有できる場所が少ない',
+            '自分たちも、実際の開発現場に近いチーム開発を経験したかった'
+          ]
+        },
+        {
+          key: '考えたこと',
+          who: 'SNSを眺めるように、すき間時間にスマホで見る人。',
+          why: '書く・読むのハードルを、できるだけ下げるため。',
+          points: [
+            'ログインなし・匿名で投稿できるようにした',
+            '通報機能がないぶん、住所欄には「お店や施設の住所」と明記して、個人の住所を書かれにくくした',
+            '先にAPIの仕様を2人で決め、フロントはダミーデータで並行して進められるようにした'
+          ]
+        },
+        {
+          key: '作ったもの',
+          points: [
+            '仕様書・API仕様・画面のモック',
+            '私の担当：一覧・詳細・投稿フォームの画面と、CSSの共通ルール',
+            '実際の開発フローに近い環境で進めている'
+          ],
+          widget: 'pop'
+        },
+        {
+          key: 'いまの状態',
+          text: '仕様策定とモックが終わり、実装を進めています。'
+        }
+      ],
+      stack: ['HTML / CSS / JavaScript', 'Java / Spring Boot', 'PostgreSQL', 'Render'],
+      links: [
+        { label: 'GitHub', href: 'https://github.com/MiyazakiTakumi-724/Pop-app' }
+      ]
     }
-    inputs.forEach((el) => el.addEventListener('input', render));
-    render();
-  })();
+  ];
 
-  // ---- Pop 掲示板のモック（タグで絞り込み） ----
-  (function(){
-    const tagsEl = document.getElementById('popTags');
-    const listEl = document.getElementById('popList');
-    const tags = ['すべて', 'ラーメン', 'カフェ', 'ガジェット', 'おでかけ'];
-    const pops = [
-      { tags: ['ラーメン'], title: '駅前の醤油ラーメン、スープが絶品', time: '3分前' },
-      { tags: ['ガジェット'], title: 'コスパ最強のワイヤレスイヤホン', time: '12分前' },
-      { tags: ['カフェ', 'おでかけ'], title: '朝イチの川沿いカフェは静かで最高', time: '40分前' },
-      { tags: ['ラーメン'], title: '商店街の塩ラーメン、あっさりで優勝', time: '1時間前' },
-      { tags: ['おでかけ'], title: '雨の日限定のスタンプラリーが楽しい', time: '2時間前' },
-      { tags: ['カフェ'], title: 'プリンが固めでうれしい喫茶店', time: '3時間前' }
-    ];
-    let current = 'すべて';
+  const NEXT = { title: '次の作品', text: '次の作品を作っています。完成したらここで公開します。' };
 
-    function render(){
-      listEl.replaceChildren();
-      pops.filter((p) => current === 'すべて' || p.tags.includes(current)).slice(0, 3).forEach((p) => {
-        const item = document.createElement('div');
-        item.className = 'pop-item';
-        const thumb = document.createElement('span');
-        thumb.className = 'pop-thumb';
-        thumb.setAttribute('aria-hidden', 'true');
-        thumb.textContent = p.tags[0].slice(0, 1);
-        const meta = document.createElement('div');
-        meta.className = 'pop-meta';
-        const title = document.createElement('span');
-        title.className = 'pop-title';
-        title.textContent = p.title;
-        const sub = document.createElement('span');
-        sub.className = 'pop-sub';
-        p.tags.forEach((t) => { const s = document.createElement('span'); s.textContent = '#' + t; sub.appendChild(s); });
-        sub.append(p.time);
-        meta.append(title, sub);
-        item.append(thumb, meta);
-        listEl.appendChild(item);
-      });
+  // ---- 精算の計算（アプリ本体と同じ貪欲法） ----
+  function settle(paid, names){
+    const total = paid.reduce((s, v) => s + v, 0);
+    const share = paid.length ? total / paid.length : 0;
+    const bal = names.map((n, i) => ({ n, v: paid[i] - share }));
+    const transfers = [];
+    for (let g = 0; g < 50; g++){
+      bal.sort((a, b) => b.v - a.v);
+      const cr = bal[0], db = bal[bal.length - 1];
+      if (!cr || cr.v < 1 || db.v > -1) break;
+      const amt = Math.min(cr.v, -db.v);
+      transfers.push({ from: db.n, to: cr.n, amt });
+      cr.v -= amt; db.v += amt;
     }
+    return { total, share, transfers };
+  }
+  const yen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
 
-    tags.forEach((t) => {
-      const b = document.createElement('button');
-      b.type = 'button';
-      b.className = 'pop-tag';
-      b.textContent = t === 'すべて' ? t : '#' + t;
-      b.setAttribute('aria-pressed', String(t === current));
-      b.addEventListener('click', () => {
-        current = t;
-        tagsEl.querySelectorAll('.pop-tag').forEach((el) => el.setAttribute('aria-pressed', String(el === b)));
+  const POPS = [
+    { tags: ['ラーメン'], title: '駅前の醤油ラーメン、スープが絶品', time: '3分前' },
+    { tags: ['ガジェット'], title: 'コスパ最強のワイヤレスイヤホン', time: '12分前' },
+    { tags: ['カフェ', 'おでかけ'], title: '朝イチの川沿いカフェは静かで最高', time: '40分前' },
+    { tags: ['ラーメン'], title: '商店街の塩ラーメン、あっさりで優勝', time: '1時間前' },
+    { tags: ['おでかけ'], title: '雨の日限定のスタンプラリーが楽しい', time: '2時間前' },
+    { tags: ['カフェ'], title: 'プリンが固めでうれしい喫茶店', time: '3時間前' }
+  ];
+  const POP_TAGS = ['すべて', 'ラーメン', 'カフェ', 'ガジェット', 'おでかけ'];
+
+  // ---- HTMLで表示するモック用の部品 ----
+  const WIDGETS = {
+    sim: {
+      html: () => `
+        <div class="sim" aria-label="精算シミュレーター">
+          <p class="sim-title">精算シミュレーター</p>
+          <p class="sim-hint">金額を書き換えると再計算します</p>
+          <label><span class="who">田中</span><input type="number" inputmode="numeric" min="0" step="100" value="12000" data-pay aria-label="田中の支払額"></label>
+          <label><span class="who">佐藤</span><input type="number" inputmode="numeric" min="0" step="100" value="3000" data-pay aria-label="佐藤の支払額"></label>
+          <label><span class="who">鈴木</span><input type="number" inputmode="numeric" min="0" step="100" value="5400" data-pay aria-label="鈴木の支払額"></label>
+          <div class="sim-meta"><span data-total></span><span data-share></span></div>
+          <div class="sim-out" data-out aria-live="polite"></div>
+        </div>`,
+      init(root){
+        const names = ['田中', '佐藤', '鈴木'];
+        const inputs = Array.from(root.querySelectorAll('[data-pay]'));
+        const out = root.querySelector('[data-out]');
+        function render(){
+          const r = settle(inputs.map((el) => Math.max(0, Number(el.value) || 0)), names);
+          root.querySelector('[data-total]').textContent = '合計 ' + yen(r.total);
+          root.querySelector('[data-share]').textContent = '1人 ' + yen(r.share);
+          out.replaceChildren();
+          if (!r.transfers.length){
+            const ok = document.createElement('p');
+            ok.className = 'sim-ok';
+            ok.textContent = '精算は不要です';
+            out.appendChild(ok);
+            return;
+          }
+          r.transfers.forEach((t) => {
+            const row = document.createElement('p');
+            row.className = 'sim-tr';
+            const l = document.createElement('span');
+            l.textContent = t.from + ' → ' + t.to;
+            const a = document.createElement('span');
+            a.className = 'amt';
+            a.textContent = yen(t.amt);
+            row.append(l, a);
+            out.appendChild(row);
+          });
+        }
+        inputs.forEach((el) => el.addEventListener('input', render));
         render();
-      });
-      tagsEl.appendChild(b);
+      }
+    },
+    pop: {
+      html: () => `
+        <div class="pop" aria-label="Popの掲示板イメージ（ダミーデータ）">
+          <div class="pop-tags" data-tags></div>
+          <div class="pop-list" data-list></div>
+        </div>`,
+      init(root){
+        const tagsEl = root.querySelector('[data-tags]');
+        const listEl = root.querySelector('[data-list]');
+        let current = 'すべて';
+        function render(){
+          listEl.replaceChildren();
+          POPS.filter((p) => current === 'すべて' || p.tags.includes(current)).slice(0, 3).forEach((p) => {
+            const item = document.createElement('div');
+            item.className = 'pop-item';
+            const thumb = document.createElement('span');
+            thumb.className = 'pop-thumb';
+            thumb.setAttribute('aria-hidden', 'true');
+            thumb.textContent = p.tags[0].slice(0, 1);
+            const meta = document.createElement('div');
+            meta.className = 'pop-meta';
+            const title = document.createElement('span');
+            title.className = 'pop-title';
+            title.textContent = p.title;
+            const sub = document.createElement('span');
+            sub.className = 'pop-sub';
+            p.tags.forEach((t) => { const s = document.createElement('span'); s.textContent = '#' + t; sub.appendChild(s); });
+            sub.append(p.time);
+            meta.append(title, sub);
+            item.append(thumb, meta);
+            listEl.appendChild(item);
+          });
+        }
+        POP_TAGS.forEach((t) => {
+          const b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'pop-tag';
+          b.textContent = t === 'すべて' ? t : '#' + t;
+          b.setAttribute('aria-pressed', String(t === current));
+          b.addEventListener('click', () => {
+            current = t;
+            tagsEl.querySelectorAll('.pop-tag').forEach((el) => el.setAttribute('aria-pressed', String(el === b)));
+            render();
+          });
+          tagsEl.appendChild(b);
+        });
+        render();
+      }
+    }
+  };
+
+  // ケーススタディの1ステップをHTMLにする
+  function stepHTML(step){
+    let h = '';
+    if (step.who){
+      h += '<dl class="cs-who"><dt>誰が</dt><dd>' + step.who + '</dd><dt>なんのために</dt><dd>' + step.why + '</dd></dl>';
+      h += '<p class="cs-so">そのために</p>';
+    }
+    if (step.points) h += '<ul class="cs-points">' + step.points.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
+    if (step.text) h += '<p class="cs-text">' + step.text + '</p>';
+    if (step.widget) h += '<div class="cs-widget" data-widget="' + step.widget + '">' + WIDGETS[step.widget].html() + '</div>';
+    return h;
+  }
+  function linksHTML(c, cls){
+    return c.links.map((l, i) => '<a class="' + cls + (i === 0 ? ' is-primary' : '') + '" href="' + l.href + '" target="_blank" rel="noopener">' + l.label + ' ↗</a>').join('');
+  }
+  // data-widget の中身を動かす
+  function mountWidgets(root){
+    root.querySelectorAll('[data-widget]').forEach((el) => {
+      if (el.dataset.mounted) return;
+      el.dataset.mounted = '1';
+      WIDGETS[el.dataset.widget].init(el);
     });
-    render();
-  })();
+  }
 
-  // ---- スクロールで表示 ----
-  (function(){
-    const els = document.querySelectorAll('.reveal');
-    if (!('IntersectionObserver' in window)){ els.forEach((el) => el.classList.add('in')); return; }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    els.forEach((el) => io.observe(el));
-  })();
+  window.SITE = { PROFILE, CASES, NEXT, POPS, POP_TAGS, settle, yen, WIDGETS, stepHTML, linksHTML, mountWidgets };
+})();
 </script>
+<script>
+  const { PROFILE, CASES, NEXT, stepHTML, linksHTML, mountWidgets } = window.SITE;
+  const ext = 'target="_blank" rel="noopener"';
+  const ICON = {
+    folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h6l2 2h10v11H3z"/></svg>',
+    file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/></svg>'
+  };
 
+  // フォルダ → ファイル → 中身
+  const folders = [
+    { id: 'about', name: '自己紹介', files: [
+      { name: 'profile.md', html: () => `<p class="kicker">${PROFILE.status}</p><h2>${PROFILE.name}</h2><p><b>${PROFILE.tagline}</b></p><p>${PROFILE.intro}</p>` },
+      { name: 'skills.txt', html: () => `<h2>スキル</h2><dl class="kv">${PROFILE.skills.map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('')}</dl>` }
+    ] },
+    ...CASES.map((c) => ({ id: c.id, name: c.id === 'travel' ? '旅行費用精算アプリ' : 'Pop', group: '制作物', files: [
+      { name: '00_概要.md', html: () => `<p class="kicker">${c.kind} / ${c.status}</p><h2>${c.title}</h2><p>${c.summary}</p><dl class="kv"><dt>技術</dt><dd>${c.stack.join(' / ')}</dd></dl><div class="c-btns">${linksHTML(c, 'c-btn')}</div>` },
+      ...c.steps.map((s, i) => ({ name: String(i + 1).padStart(2, '0') + '_' + s.key + '.md', tag: s.key, html: () => `<p class="kicker">${c.title}　${i + 1} / ${c.steps.length}</p><h2>${s.key}</h2>${stepHTML(s)}` }))
+    ] })),
+    { id: 'next', name: '次の作品', group: '制作物', files: [ { name: 'README.txt', html: () => `<h2>${NEXT.title}</h2><p>${NEXT.text}</p>` } ] },
+    { id: 'contact', name: '連絡先', files: [
+      { name: 'contact.txt', html: () => `<h2>面接・カジュアル面談、お気軽にどうぞ。</h2><p class="mail"><a href="mailto:${PROFILE.email}">${PROFILE.email}</a></p><div class="c-btns"><a class="c-btn c-btn-solid" href="mailto:${PROFILE.email}">メールを送る</a><a class="c-btn" href="${PROFILE.github}" ${ext}>GitHub ↗</a></div>` }
+    ] }
+  ];
+
+  function explorer(root, start){
+    root.innerHTML = '<div class="fx"><div class="fx-path" data-path></div><nav class="fx-side" aria-label="フォルダ" data-side></nav><div class="fx-files" role="listbox" aria-label="ファイル" data-files></div><div class="fx-preview" data-preview></div></div>';
+    const side = root.querySelector('[data-side]'), files = root.querySelector('[data-files]'), preview = root.querySelector('[data-preview]'), path = root.querySelector('[data-path]');
+    let fi = 0, gi = null;
+    folders.forEach((f, i) => {
+      if (f.group && f.group !== gi){ gi = f.group; side.insertAdjacentHTML('beforeend', '<span class="grp">' + f.group + '</span>'); }
+      else if (!f.group && gi){ gi = null; side.insertAdjacentHTML('beforeend', '<span class="grp">その他</span>'); }
+      const b = document.createElement('button');
+      b.type = 'button'; b.className = 'fx-item'; b.dataset.folder = i;
+      b.innerHTML = ICON.folder + '<span></span>';
+      b.querySelector('span').textContent = f.name;
+      b.addEventListener('click', () => openFolder(i));
+      side.appendChild(b);
+    });
+    function openFolder(i, file){
+      fi = i;
+      side.querySelectorAll('[data-folder]').forEach((b) => b.setAttribute('aria-selected', String(Number(b.dataset.folder) === i)));
+      files.replaceChildren();
+      folders[i].files.forEach((f, k) => {
+        const b = document.createElement('button');
+        b.type = 'button'; b.className = 'fx-item'; b.setAttribute('role', 'option'); b.dataset.file = k;
+        b.innerHTML = ICON.file + '<span></span>';
+        b.querySelector('span').textContent = f.name;
+        b.addEventListener('click', () => openFile(k));
+        files.appendChild(b);
+      });
+      openFile(file || 0);
+    }
+    function openFile(k){
+      const f = folders[fi], file = f.files[k];
+      files.querySelectorAll('[data-file]').forEach((b) => b.setAttribute('aria-selected', String(Number(b.dataset.file) === k)));
+      path.innerHTML = 'ポートフォリオ › ' + f.name + ' › <b></b>';
+      path.querySelector('b').textContent = file.name;
+      const nxt = f.files[k + 1];
+      preview.innerHTML = '<div class="doc">' + file.html() + (nxt ? '<p class="next">次のファイル：<button type="button" data-nextfile>' + nxt.name + '</button></p>' : '') + '</div>';
+      preview.scrollTop = 0;
+      const nb = preview.querySelector('[data-nextfile]');
+      if (nb) nb.addEventListener('click', () => openFile(k + 1));
+      mountWidgets(preview);
+    }
+    root.openFolder = (id, file) => openFolder(Math.max(0, folders.findIndex((f) => f.id === id)), file);
+    root.openFolder(start || 'travel', 0);
+  }
+
+  const touch = window.matchMedia('(pointer: coarse)').matches;
+  window.PORTFOLIO = {
+    apps: [
+      { id: 'files', kind: 'folder', label: 'ファイル', short: 'ファイル', title: 'ファイル — ポートフォリオ', w: 1040, h: 640 },
+      { id: 'readme', kind: 'doc', label: 'はじめに.txt', short: 'はじめに', title: 'はじめに.txt', w: 420, h: 360 },
+      { id: 'contact', kind: 'mail', label: '連絡先', short: '連絡先', title: '連絡先', w: 460, h: 330 }
+    ],
+    html: {
+      files: () => '',
+      readme: () => `<div class="c"><h2>ようこそ。</h2><p>宮崎卓己のポートフォリオです。「ファイル」を${touch ? 'タップ' : 'ダブルクリック'}すると、制作物のフォルダを見られます。</p><p>制作物のフォルダには「課題 → 考えたこと → 作ったもの → いまの状態」の順にファイルが入っています。</p><div class="c-btns"><button type="button" class="c-btn c-btn-solid" data-open="files">ファイルを開く</button></div></div>`,
+      contact: () => '<div class="c"><h2>面接・カジュアル面談、お気軽にどうぞ。</h2><p class="c-mail"><a href="mailto:' + PROFILE.email + '">' + PROFILE.email + '</a></p><div class="c-btns"><a class="c-btn c-btn-solid" href="mailto:' + PROFILE.email + '">メールを送る</a><a class="c-btn" href="' + PROFILE.github + '" ' + ext + '>GitHub ↗</a></div></div>'
+    },
+    init: { files: (root) => explorer(root) }
+  };
+</script>
+<script>
+/* 共通ウィンドウマネージャー：アイコン・ウィンドウ・タスクバー・Dock を扱う */
+(function(){
+  'use strict';
+  const P = window.PORTFOLIO;
+  const mqSmall = window.matchMedia('(max-width: 700px)');
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const wins = new Map();
+  let cfg = null;
+  let z = 10;
+  let opened = 0;
+
+  // ドット絵風アイコン（レトロ系テーマ用）
+  const PIXEL = {
+    doc: '<path class="ic-paper ic-stroke" d="M7 3h13l6 6v20H7z"/><path class="ic-line" d="M20 3v6h6M11 15h11M11 19h11M11 23h7"/>',
+    person: '<rect class="ic-paper ic-stroke" x="4" y="4" width="24" height="24"/><rect class="ic-acc" x="12" y="8" width="8" height="8"/><path class="ic-acc" d="M8 27v-4c0-3 3-5 8-5s8 2 8 5v4z"/>',
+    app: '<rect class="ic-acc ic-stroke" x="4" y="10" width="24" height="17"/><path class="ic-line" d="M12 10V6h8v4M4 17h24"/>',
+    app2: '<path class="ic-paper ic-stroke" d="M4 5h24v16H14l-6 6v-6H4z"/><path class="ic-line" d="M9 11h14M9 15h9"/>',
+    folder: '<path class="ic-acc2 ic-stroke" d="M3 8h10l3 3h13v16H3z"/>',
+    mail: '<rect class="ic-paper ic-stroke" x="3" y="7" width="26" height="18"/><path class="ic-line" d="M3 7l13 10 13-10"/>'
+  };
+  // 線画アイコン（モダン系テーマ用）
+  const LINE = {
+    doc: '<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/>',
+    person: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+    app: '<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M9 7V4h6v3M3 13h18"/>',
+    app2: '<path d="M4 5h16v11H10l-5 4v-4H4z"/><path d="M8 10h8"/>',
+    folder: '<path d="M3 6h6l2 2h10v11H3z"/>',
+    mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'
+  };
+  const pixelIcon = (kind) => '<svg viewBox="0 0 32 32" shape-rendering="crispEdges" aria-hidden="true">' + (PIXEL[kind] || '') + '</svg>';
+  const lineIcon = (kind) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (LINE[kind] || '') + '</svg>';
+
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const appById = (id) => P.apps.find((a) => a.id === id);
+  const iconHtml = (app) => (cfg.icon ? cfg.icon(app) : pixelIcon(app.kind));
+  function el(tag, cls, text){
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (text != null) e.textContent = text;
+    return e;
+  }
+
+  function boot(options){
+    cfg = Object.assign({
+      desktop: '#desktop',
+      icons: '#icons',
+      taskbar: null,
+      dock: null,
+      mode: 'float',
+      controls: ['min', 'max', 'close'],
+      controlLabels: { min: '–', max: '□', close: '×' },
+      open: [],
+      icon: null,
+      title: null,
+      cascade: { x: 120, y: 28 }
+    }, options);
+    cfg.desktopEl = document.querySelector(cfg.desktop);
+    if (cfg.mode === 'tile') cfg.desktopEl.classList.add('mode-tile');
+    document.documentElement.classList.toggle('is-touch', coarse);
+
+    renderIcons();
+    renderDock();
+
+    document.addEventListener('click', (e) => {
+      const t = e.target.closest('[data-open]');
+      if (!t) return;
+      e.preventDefault();
+      open(t.dataset.open);
+      if (cfg.onLaunch) cfg.onLaunch(t.dataset.open);
+    });
+    cfg.desktopEl.addEventListener('pointerdown', (e) => {
+      if (!e.target.closest('.dicon') && !e.target.closest('.win')) selectIcon(null);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape') return;
+      const f = focused();
+      if (f) close(f.dataset.app);
+    });
+
+    tickClock();
+    setInterval(tickClock, 10000);
+    // スマホではウィンドウが全画面になるため、最初はデスクトップを見せる
+    const initial = mqSmall.matches && cfg.mode === 'float' ? [] : cfg.open;
+    initial.forEach((o) => (typeof o === 'string' ? open(o) : open(o.id, o)));
+    updateBars();
+  }
+
+  // ---- デスクトップのアイコン ----
+  function renderIcons(){
+    const wrap = cfg.icons && document.querySelector(cfg.icons);
+    if (!wrap) return;
+    const apps = cfg.iconApps ? cfg.iconApps.map(appById) : P.apps;
+    apps.forEach((app, i) => {
+      const b = el('button', 'dicon');
+      b.type = 'button';
+      b.dataset.app = app.id;
+      b.style.setProperty('--i', i);
+      b.innerHTML = '<span class="dicon-img">' + iconHtml(app) + '</span><span class="dicon-label"></span>';
+      b.querySelector('.dicon-label').textContent = app.label;
+      b.setAttribute('aria-label', app.label + 'を開く');
+      b.addEventListener('click', () => { selectIcon(b); if (coarse) open(app.id); });
+      b.addEventListener('dblclick', () => open(app.id));
+      b.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter'){ e.preventDefault(); open(app.id); }
+      });
+      wrap.appendChild(b);
+    });
+  }
+  function selectIcon(b){
+    document.querySelectorAll('.dicon.selected').forEach((x) => x.classList.remove('selected'));
+    if (b) b.classList.add('selected');
+  }
+
+  // ---- Dock（全アプリの起動ボタン） ----
+  function renderDock(){
+    const wrap = cfg.dock && document.querySelector(cfg.dock);
+    if (!wrap) return;
+    const apps = cfg.dockApps ? cfg.dockApps.map(appById) : P.apps;
+    apps.forEach((app) => {
+      const b = el('button', 'dock-btn');
+      b.type = 'button';
+      b.dataset.open = app.id;
+      b.dataset.dock = app.id;
+      b.setAttribute('aria-label', app.label + 'を開く');
+      b.innerHTML = cfg.dockItem ? cfg.dockItem(app) : iconHtml(app);
+      wrap.appendChild(b);
+    });
+  }
+
+  // ---- ウィンドウ ----
+  function open(id, pos){
+    const app = appById(id);
+    if (!app) return null;
+    let w = wins.get(id);
+    if (w){
+      w.hidden = false;
+      focus(w);
+      return w;
+    }
+    w = el('section', 'win opening');
+    w.dataset.app = id;
+    w.setAttribute('role', 'dialog');
+    w.setAttribute('aria-label', app.title);
+
+    const bar = el('header', 'win-bar');
+    const title = el('span', 'win-title', cfg.title ? cfg.title(app) : app.title);
+    const ctrls = el('span', 'win-ctrls');
+    cfg.controls.forEach((act) => {
+      const b = el('button', 'win-btn win-' + act);
+      b.type = 'button';
+      b.dataset.act = act;
+      b.setAttribute('aria-label', { min: '最小化', max: '最大化', close: '閉じる' }[act]);
+      b.innerHTML = '<span aria-hidden="true">' + cfg.controlLabels[act] + '</span>';
+      ctrls.appendChild(b);
+    });
+    bar.append(title, ctrls);
+
+    const body = el('div', 'win-body');
+    body.innerHTML = P.html[id]();
+    w.append(bar, body);
+
+    if (cfg.mode === 'float'){
+      const D = cfg.desktopEl.getBoundingClientRect();
+      const ww = Math.min((pos && pos.w) || app.w, D.width - 16);
+      const hh = Math.min((pos && pos.h) || app.h, D.height - 16);
+      let x, y;
+      if (pos && pos.x != null){ x = D.width * pos.x; y = D.height * pos.y; }
+      else { const k = opened % 6; x = cfg.cascade.x + k * 34; y = cfg.cascade.y + k * 30; }
+      x = clamp(x, 8, Math.max(8, D.width - ww - 8));
+      y = clamp(y, 8, Math.max(8, D.height - hh - 8));
+      Object.assign(w.style, { left: x + 'px', top: y + 'px', width: ww + 'px', height: hh + 'px' });
+    }
+    opened++;
+    cfg.desktopEl.appendChild(w);
+    wins.set(id, w);
+    bindWindow(w, bar);
+    if (P.init[id]) P.init[id](body);
+    focus(w);
+    setTimeout(() => w.classList.remove('opening'), 300);
+    return w;
+  }
+
+  function bindWindow(w, bar){
+    w.addEventListener('pointerdown', () => { if (!w.classList.contains('focused')) focus(w); });
+    bar.addEventListener('click', (e) => {
+      const b = e.target.closest('.win-btn');
+      if (!b) return;
+      const id = w.dataset.app;
+      if (b.dataset.act === 'close') close(id);
+      else if (b.dataset.act === 'min') minimize(id);
+      else toggleMax(w);
+    });
+    bar.addEventListener('dblclick', (e) => { if (!e.target.closest('.win-btn')) toggleMax(w); });
+    bar.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0 || e.target.closest('.win-btn')) return;
+      if (cfg.mode !== 'float' || mqSmall.matches || w.classList.contains('max')) return;
+      const D = cfg.desktopEl.getBoundingClientRect();
+      const sx = e.clientX, sy = e.clientY, ox = w.offsetLeft, oy = w.offsetTop;
+      bar.setPointerCapture(e.pointerId);
+      w.classList.add('dragging');
+      const move = (ev) => {
+        w.style.left = clamp(ox + ev.clientX - sx, 80 - w.offsetWidth, D.width - 80) + 'px';
+        w.style.top = clamp(oy + ev.clientY - sy, 0, D.height - 36) + 'px';
+      };
+      const up = () => {
+        w.classList.remove('dragging');
+        bar.removeEventListener('pointermove', move);
+        bar.removeEventListener('pointerup', up);
+        bar.removeEventListener('pointercancel', up);
+      };
+      bar.addEventListener('pointermove', move);
+      bar.addEventListener('pointerup', up);
+      bar.addEventListener('pointercancel', up);
+    });
+  }
+
+  function focus(w){
+    wins.forEach((o) => o.classList.remove('focused'));
+    w.classList.add('focused');
+    w.style.zIndex = ++z;
+    updateBars();
+  }
+  function focused(){
+    let f = null;
+    wins.forEach((w) => { if (w.classList.contains('focused') && !w.hidden) f = w; });
+    return f;
+  }
+  function focusTop(){
+    let top = null;
+    wins.forEach((w) => { if (!w.hidden && (!top || Number(w.style.zIndex) > Number(top.style.zIndex))) top = w; });
+    if (top) focus(top); else updateBars();
+  }
+  function close(id){
+    const w = wins.get(id);
+    if (!w) return;
+    w.remove();
+    wins.delete(id);
+    focusTop();
+  }
+  function minimize(id){
+    if (!cfg.taskbar && !cfg.dock){ close(id); return; }
+    const w = wins.get(id);
+    if (!w) return;
+    w.hidden = true;
+    w.classList.remove('focused');
+    focusTop();
+  }
+  function toggleMax(w){
+    w.classList.toggle('max');
+    const b = w.querySelector('.win-max');
+    if (b) b.setAttribute('aria-label', w.classList.contains('max') ? '元のサイズに戻す' : '最大化');
+  }
+
+  // ---- タスクバー・Dock の状態 ----
+  function updateBars(){
+    if (cfg.taskbar){
+      const t = document.querySelector(cfg.taskbar);
+      t.replaceChildren();
+      wins.forEach((w, id) => {
+        const app = appById(id);
+        const active = w.classList.contains('focused') && !w.hidden;
+        const b = el('button', 'task-btn' + (active ? ' active' : ''));
+        b.type = 'button';
+        b.setAttribute('aria-pressed', String(active));
+        b.innerHTML = '<span class="task-ic">' + iconHtml(app) + '</span><span class="task-label"></span>';
+        b.querySelector('.task-label').textContent = app.short;
+        b.addEventListener('click', () => {
+          if (active) minimize(id);
+          else { w.hidden = false; focus(w); }
+        });
+        t.appendChild(b);
+      });
+    }
+    if (cfg.dock){
+      document.querySelectorAll(cfg.dock + ' [data-dock]').forEach((b) => {
+        b.classList.toggle('open', wins.has(b.dataset.dock));
+      });
+    }
+    cfg.desktopEl.dataset.count = String(wins.size);
+    if (cfg.onChange) cfg.onChange(wins, focused());
+  }
+
+  function tickClock(){
+    const d = new Date();
+    const hm = d.getHours() + ':' + String(d.getMinutes()).padStart(2, '0');
+    document.querySelectorAll('[data-clock]').forEach((e) => { e.textContent = hm; });
+    const date = (d.getMonth() + 1) + '月' + d.getDate() + '日（' + '日月火水木金土'[d.getDay()] + '）';
+    document.querySelectorAll('[data-date]').forEach((e) => { e.textContent = date; });
+  }
+
+  window.OS = { boot, open, close, minimize, iconHtml: (app) => iconHtml(app), pixelIcon, lineIcon, apps: P.apps };
+})();
+</script>
+<script>
+  OS.boot({
+    icon: (app) => OS.lineIcon(app.kind),
+    controls: ['max', 'close'],
+    open: [{ id: 'files', x: .14, y: .05 }]
+  });
+</script>
 </body>
 </html>
