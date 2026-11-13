@@ -321,6 +321,12 @@ a{ color: inherit; }
   .doc dd{ margin: 0; }
   .doc .cs-who{ padding: 12px 14px; border-left: 3px solid var(--blue); background: #f5f8fd; }
   .doc .cs-so{ font-size: 13px; color: var(--muted); font-weight: 700; }
+  .doc .cs-sub{ margin-top: 6px; font-size: 17px; line-height: 1.5; }
+  .doc .cs-sub:first-of-type{ margin-top: 0; }
+  .doc .cs-text{ margin: 0; }
+  .pop-clear{ min-height: 30px; padding: 0 8px; background: none; border: 0; color: var(--blue); font-size: 12px; text-decoration: underline; cursor: pointer; }
+  .pop-clear[hidden]{ display: none; }
+  .pop-empty{ margin: 8px 0 0; font-size: 13px; color: var(--muted); }
   .doc .cs-points{ padding-left: 1.2em; margin: 0; }
   .doc .cs-points li + li{ margin-top: 4px; }
   .doc .next{ font-size: 13.5px; color: var(--muted); }
@@ -362,17 +368,20 @@ a{ color: inherit; }
   </footer>
 
 <script>
-/* v2 共通データ：プロフィールと、制作物のケーススタディ（課題 → 考えたこと → 作ったもの → いまの状態） */
+/* 本番サイトの中身：プロフィールと、制作物のケーススタディ
+   （課題と考えたこと → 作ったもの → 工夫したこと → いまの状態） */
 (function(){
   const PROFILE = {
     name: '宮崎 卓己',
-    nameEn: 'Takumi Miyazaki',
-    tagline: '身近な「めんどくさい」を、コードで小さく解決する。',
-    status: '新卒でWeb開発職を目指して就職活動中（20歳）',
-    intro: 'はじめまして、宮崎卓己です。20歳で、Web開発職を目指して就職活動をしています。何より大切にしているのは「誰が・なんのために使うのか」を徹底的に考えること。機能ひとつひとつを、使う人の場面と目的から逆算して設計しています。',
+    status: '神奈川大学 情報学部・Webエンジニア志望（20歳）',
+    intro: [
+      '神奈川大学 情報学部の宮崎卓己です。大学では情報工学を中心に学び、C言語やJavaを通して、低レイヤーの基礎からオブジェクト指向までを身につけてきました。現在はWebエンジニアを目指して、JavaScriptを使ったWeb開発に力を入れています。',
+      '学業以外では、ブックオフでのアルバイトに力を注ぎ、スタッフ同士で連携しながら店舗の業務に取り組んできました。',
+      'このポートフォリオでは、これまでに作ったものを「課題と考えたこと → 作ったもの → 工夫したこと → いまの状態」の順に紹介しています。'
+    ],
     skills: [
       ['言語', 'TypeScript / JavaScript / Java / C'],
-      ['フロント', 'Next.js / React / Tailwind CSS'],
+      ['フロント', 'HTML / CSS / React / Next.js / Tailwind CSS'],
       ['DB', 'Prisma / PostgreSQL'],
       ['認証', 'Auth.js（Google OAuth）'],
       ['ツール', 'Git / GitHub']
@@ -384,45 +393,56 @@ a{ color: inherit; }
   const CASES = [
     {
       id: 'travel',
-      slug: 'travel-app',
-      title: '旅行費用精算アプリ',
+      title: '旅行清算アプリ',
       kind: '個人開発',
       status: '公開中',
-      summary: '旅行中の立て替えを記録して、「誰が誰にいくら払えば終わるか」を自動で計算するアプリ。',
+      summary: '旅行中の立て替えを記録して、「誰が誰にいくら払えば終わるか」を自動で計算するWebアプリ。',
+      facts: [
+        ['技術', 'HTML / JavaScript / React / Next.js（App Router・Server Actions）/ Auth.js / Prisma / PostgreSQL / Tailwind CSS'],
+        ['公開環境', 'Vercel ＋ Neon（PostgreSQL）'],
+        ['担当', '個人開発（企画・設計・実装・公開まで一人で担当）'],
+        ['開発期間', '2026年6月〜（約5か月。学業の合間に開発）']
+      ],
       steps: [
         {
-          key: '課題',
-          points: [
+          key: '課題と考えたこと',
+          problems: [
             'グループ旅行では立て替えが何度も起きて、最後には「誰がいくら払ったか」が分からなくなる',
             '割り勘の計算は手間がかかり、端数でもめやすい',
             '友達にお金を請求するのは、どうしても気まずい'
-          ]
-        },
-        {
-          key: '考えたこと',
+          ],
           who: '旅行に参加しているメンバー全員。旅行中、外でスマホを片手に操作する場面が多い。',
           why: '計算の手間と、お金を請求する気まずさをなくして、旅行そのものを楽しんでもらうため。',
           points: [
             '入力はその場で開くウィンドウで済ませ、画面の切り替えを減らした',
             '参加はGoogleログインと招待URLだけ。アカウント作成の手間をなくした',
-            '「誰が誰にいくら払うか」はアプリが示す。自分から言い出す気まずさを減らした'
+            '「誰が誰にいくら払うか」はアプリが示す。自分から言い出す気まずさを減らした',
+            '自分が払う・受け取る金額をいちばん目立つ場所に出し、ほかのメンバー同士の精算とは分けて表示した'
           ]
         },
         {
           key: '作ったもの',
           points: [
-            '立て替えの記録と一覧、支払いごとの精算済みチェック',
-            '未精算の支払いだけを均等割りし、送金回数が最小になる組み合わせを計算（貪欲法）',
-            '招待URLでの参加と、初回のニックネーム設定'
+            'Googleログインと、初回のニックネーム設定',
+            '旅行の作成・編集・削除と、招待URLでの参加',
+            '立て替えの記録・編集・削除。2人以上で払ったときは、支払者を複数選ぶと金額を均等に分けて記録する',
+            '支払いごとの精算済みチェック（精算済みの支払いは計算から外す）',
+            '未精算の支払いから「誰が誰にいくら払うか」を自動で計算'
+          ]
+        },
+        {
+          key: '工夫したこと',
+          items: [
+            { title: '送金の回数を減らす精算', text: '未精算の支払いを人数で均等に割り、一人ひとりの収支（払った額 − 負担する額）を出します。そのうえで、受け取る人と払う人をそれぞれ金額の大きい順に並べて組み合わせることで、送金の回数を減らしました。' },
+            { title: 'ボタンの反応の改善', text: '本番環境で、ボタンを押してから画面に反映されるまでに時間がかかる問題が起きました。そこで、サーバーの処理をデータベースと同じ地域（シンガポール）に移して通信の待ち時間を減らし、さらにReactのuseOptimisticを使った楽観的更新（サーバーの応答を待たずに画面を先に更新し、失敗したら元に戻す手法）を取り入れて、操作感を改善しました。' }
           ],
           widget: 'sim'
         },
         {
           key: 'いまの状態',
-          text: 'Vercelで公開中です。デモから実際に使えます。'
+          text: 'Vercelで公開中です。デモから実際に使えます（ログインにはGoogleアカウントが必要です）。'
         }
       ],
-      stack: ['Next.js', 'Auth.js', 'Prisma', 'PostgreSQL', 'Tailwind CSS'],
       links: [
         { label: 'デモを開く', href: 'https://travel-app-xi-seven.vercel.app/' },
         { label: 'GitHub', href: 'https://github.com/MiyazakiTakumi-724/travel-app' }
@@ -430,51 +450,59 @@ a{ color: inherit; }
     },
     {
       id: 'pop',
-      slug: 'pop',
       title: '匿名レビュー掲示板「Pop」',
       kind: '友人と2人でのチーム開発',
       status: '開発中',
       summary: '食べ物・商品などのレビュー（＝ポップ）を匿名で気軽に投稿でき、新着順に並ぶスマホ向けの掲示板。',
+      facts: [
+        ['技術', 'フロント：HTML / CSS / JavaScript（フレームワークなし）　バックエンド：Java / Spring Boot / PostgreSQL'],
+        ['担当', 'フロントエンド（一覧・詳細・投稿フォームの画面、共通のJavaScript、CSSの共通ルール）。バックエンドは相方が担当'],
+        ['開発期間', '2026年8月〜（開発中）']
+      ],
       steps: [
         {
-          key: '課題',
-          points: [
-            '「おいしかった」「よかった」くらいの感想を、アカウント登録なしで気軽に共有できる場所が少ない',
+          key: '課題と考えたこと',
+          problems: [
+            '「おいしかった」「よかった」くらいの感想を、アカウント登録なしで気軽に共有できる掲示板が少ない',
             '自分たちも、実際の開発現場に近いチーム開発を経験したかった'
-          ]
-        },
-        {
-          key: '考えたこと',
+          ],
           who: 'SNSを眺めるように、すき間時間にスマホで見る人。',
           why: '書く・読むのハードルを、できるだけ下げるため。',
           points: [
             'ログインなし・匿名で投稿できるようにした',
-            '通報機能がないぶん、住所欄には「お店や施設の住所」と明記して、個人の住所を書かれにくくした',
-            '先にAPIの仕様を2人で決め、フロントはダミーデータで並行して進められるようにした'
+            '分類は決まった種別ではなく自由に付けられるタグにし、タグを入力して絞り込めるようにした',
+            '通報機能がないぶん、住所欄には「お店や施設の住所」と案内を出して、個人の住所を書かれにくくした'
           ]
         },
         {
           key: '作ったもの',
           points: [
-            '仕様書・API仕様・画面のモック',
-            '私の担当：一覧・詳細・投稿フォームの画面と、CSSの共通ルール',
-            '実際の開発フローに近い環境で進めている'
+            '仕様書・API仕様・画面のモック（2人で合意しながら作成）',
+            '一覧画面：ポップのカード一覧、「〇分前」の投稿時間の表示',
+            'タグでの絞り込み：入力してEnterで追加・押して外す・すべて解除。複数のタグを指定すると、すべてのタグが付いたポップだけを表示する'
           ],
           widget: 'pop'
         },
         {
+          key: '工夫したこと',
+          points: [
+            'あとから意見が食い違わないよう、チームメンバーとこまめに話し合い、決めたことは仕様書に残しながら進めている',
+            '先にAPIの仕様を2人で決めておき、フロントはダミーデータを使って、バックエンドと並行して進められるようにした',
+            '匿名で誰でも書き込めるため、入力された文字はHTMLとして埋め込まず、文字として表示するルールにした（textContentを使う）'
+          ]
+        },
+        {
           key: 'いまの状態',
-          text: '仕様策定とモックが終わり、実装を進めています。'
+          text: '仕様策定とモックが終わり、実装を進めています。いまは一覧画面の「もっと見る」（続きの読み込み）に取り組んでいます。'
         }
       ],
-      stack: ['HTML / CSS / JavaScript', 'Java / Spring Boot', 'PostgreSQL', 'Render'],
       links: [
         { label: 'GitHub', href: 'https://github.com/MiyazakiTakumi-724/Pop-app' }
       ]
     }
   ];
 
-  const NEXT = { title: '次の作品', text: '次の作品を作っています。完成したらここで公開します。' };
+  const NEXT = { title: '次の作品', text: '制作中...' };
 
   // ---- 精算の計算（アプリ本体と同じ貪欲法） ----
   function settle(paid, names){
@@ -494,6 +522,7 @@ a{ color: inherit; }
   }
   const yen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
 
+  // Pop のダミーデータ（掲示板のイメージ）
   const POPS = [
     { tags: ['ラーメン'], title: '駅前の醤油ラーメン、スープが絶品', time: '3分前' },
     { tags: ['ガジェット'], title: 'コスパ最強のワイヤレスイヤホン', time: '12分前' },
@@ -502,9 +531,8 @@ a{ color: inherit; }
     { tags: ['おでかけ'], title: '雨の日限定のスタンプラリーが楽しい', time: '2時間前' },
     { tags: ['カフェ'], title: 'プリンが固めでうれしい喫茶店', time: '3時間前' }
   ];
-  const POP_TAGS = ['すべて', 'ラーメン', 'カフェ', 'ガジェット', 'おでかけ'];
+  const POP_TAGS = ['ラーメン', 'カフェ', 'ガジェット', 'おでかけ'];
 
-  // ---- HTMLで表示するモック用の部品 ----
   const WIDGETS = {
     sim: {
       html: () => `
@@ -549,6 +577,7 @@ a{ color: inherit; }
         render();
       }
     },
+    // 本物と同じく、選んだタグが「すべて」付いたポップだけを表示する
     pop: {
       html: () => `
         <div class="pop" aria-label="Popの掲示板イメージ（ダミーデータ）">
@@ -558,10 +587,21 @@ a{ color: inherit; }
       init(root){
         const tagsEl = root.querySelector('[data-tags]');
         const listEl = root.querySelector('[data-list]');
-        let current = 'すべて';
+        const selected = [];
+        let clearBtn = null;
         function render(){
+          tagsEl.querySelectorAll('[data-tag]').forEach((b) => b.setAttribute('aria-pressed', String(selected.includes(b.dataset.tag))));
+          clearBtn.hidden = selected.length === 0;
           listEl.replaceChildren();
-          POPS.filter((p) => current === 'すべて' || p.tags.includes(current)).slice(0, 3).forEach((p) => {
+          const hits = POPS.filter((p) => selected.every((t) => p.tags.includes(t)));
+          if (!hits.length){
+            const empty = document.createElement('p');
+            empty.className = 'pop-empty';
+            empty.textContent = '条件に合うポップはありません';
+            listEl.appendChild(empty);
+            return;
+          }
+          hits.slice(0, 3).forEach((p) => {
             const item = document.createElement('div');
             item.className = 'pop-item';
             const thumb = document.createElement('span');
@@ -586,15 +626,21 @@ a{ color: inherit; }
           const b = document.createElement('button');
           b.type = 'button';
           b.className = 'pop-tag';
-          b.textContent = t === 'すべて' ? t : '#' + t;
-          b.setAttribute('aria-pressed', String(t === current));
+          b.dataset.tag = t;
+          b.textContent = '#' + t;
           b.addEventListener('click', () => {
-            current = t;
-            tagsEl.querySelectorAll('.pop-tag').forEach((el) => el.setAttribute('aria-pressed', String(el === b)));
+            const i = selected.indexOf(t);
+            if (i < 0) selected.push(t); else selected.splice(i, 1);
             render();
           });
           tagsEl.appendChild(b);
         });
+        clearBtn = document.createElement('button');
+        clearBtn.type = 'button';
+        clearBtn.className = 'pop-clear';
+        clearBtn.textContent = 'すべて解除';
+        clearBtn.addEventListener('click', () => { selected.length = 0; render(); });
+        tagsEl.appendChild(clearBtn);
         render();
       }
     }
@@ -603,11 +649,16 @@ a{ color: inherit; }
   // ケーススタディの1ステップをHTMLにする
   function stepHTML(step){
     let h = '';
+    if (step.problems){
+      h += '<h3 class="cs-sub">課題</h3><ul class="cs-points">' + step.problems.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
+      h += '<h3 class="cs-sub">考えたこと</h3>';
+    }
     if (step.who){
       h += '<dl class="cs-who"><dt>誰が</dt><dd>' + step.who + '</dd><dt>なんのために</dt><dd>' + step.why + '</dd></dl>';
       h += '<p class="cs-so">そのために</p>';
     }
     if (step.points) h += '<ul class="cs-points">' + step.points.map((p) => '<li>' + p + '</li>').join('') + '</ul>';
+    if (step.items) h += step.items.map((it) => '<h3 class="cs-sub">' + it.title + '</h3><p class="cs-text">' + it.text + '</p>').join('');
     if (step.text) h += '<p class="cs-text">' + step.text + '</p>';
     if (step.widget) h += '<div class="cs-widget" data-widget="' + step.widget + '">' + WIDGETS[step.widget].html() + '</div>';
     return h;
@@ -624,7 +675,7 @@ a{ color: inherit; }
     });
   }
 
-  window.SITE = { PROFILE, CASES, NEXT, POPS, POP_TAGS, settle, yen, WIDGETS, stepHTML, linksHTML, mountWidgets };
+  window.SITE = { PROFILE, CASES, NEXT, stepHTML, linksHTML, mountWidgets };
 })();
 </script>
 <script>
@@ -639,14 +690,14 @@ a{ color: inherit; }
   // フォルダ → ファイル → 中身
   const folders = [
     { id: 'about', name: '自己紹介', files: [
-      { name: 'profile.md', html: () => `<p class="kicker">${PROFILE.status}</p><h2>${PROFILE.name}</h2><p>${PROFILE.intro}</p>` },
+      { name: 'profile.md', html: () => `<p class="kicker">${PROFILE.status}</p><h2>${PROFILE.name}</h2>${PROFILE.intro.map((p) => '<p>' + p + '</p>').join('')}` },
       { name: 'skills.txt', html: () => `<h2>スキル</h2><dl class="kv">${PROFILE.skills.map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('')}</dl>` }
     ] },
-    ...CASES.map((c) => ({ id: c.id, name: c.id === 'travel' ? '旅行費用精算アプリ' : 'Pop', group: '制作物', files: [
-      { name: '00_概要.md', html: () => `<p class="kicker">${c.kind} / ${c.status}</p><h2>${c.title}</h2><p>${c.summary}</p><dl class="kv"><dt>技術</dt><dd>${c.stack.join(' / ')}</dd></dl><div class="c-btns">${linksHTML(c, 'c-btn')}</div>` },
+    ...CASES.map((c) => ({ id: c.id, name: c.id === 'travel' ? c.title : 'Pop', group: '制作物', files: [
+      { name: '00_概要.md', html: () => `<p class="kicker">${c.kind} / ${c.status}</p><h2>${c.title}</h2><p>${c.summary}</p><dl class="kv">${c.facts.map(([k, v]) => '<dt>' + k + '</dt><dd>' + v + '</dd>').join('')}</dl><div class="c-btns">${linksHTML(c, 'c-btn')}</div>` },
       ...c.steps.map((s, i) => ({ name: String(i + 1).padStart(2, '0') + '_' + s.key + '.md', html: () => `<p class="kicker">${c.title}　${i + 1} / ${c.steps.length}</p><h2>${s.key}</h2>${stepHTML(s)}` }))
     ] })),
-    { id: 'next', name: '次の作品', group: '制作物', files: [ { name: 'README.txt', html: () => `<h2>${NEXT.title}</h2><p>${NEXT.text}</p>` } ] },
+    { id: 'next', name: '次の作品', group: '制作物', files: [ { name: 'README.txt', html: () => `<h2>${NEXT.text}</h2>` } ] },
     { id: 'contact', name: '連絡先', files: [
       { name: 'contact.txt', html: () => `<h2>面接・カジュアル面談、お気軽にどうぞ。</h2><p class="mail"><a href="mailto:${PROFILE.email}">${PROFILE.email}</a></p><div class="c-btns"><a class="c-btn c-btn-solid" href="mailto:${PROFILE.email}">メールを送る</a><a class="c-btn" href="${PROFILE.github}" ${ext}>GitHub ↗</a></div>` }
     ] }
@@ -693,19 +744,17 @@ a{ color: inherit; }
       mountWidgets(preview);
     }
     root.openFolder = (id, file) => openFolder(Math.max(0, folders.findIndex((f) => f.id === id)), file);
-    root.openFolder('travel', 0);
+    root.openFolder('about', 0);
   }
 
   const touch = window.matchMedia('(pointer: coarse)').matches;
   window.PORTFOLIO = {
     apps: [
       { id: 'files', kind: 'folder', label: 'ファイル', short: 'ファイル', title: 'ファイル — ポートフォリオ', w: 1040, h: 640 },
-      { id: 'readme', kind: 'doc', label: 'はじめに.txt', short: 'はじめに', title: 'はじめに.txt', w: 440, h: 400 },
       { id: 'contact', kind: 'mail', label: '連絡先', short: '連絡先', title: '連絡先', w: 460, h: 330 }
     ],
     html: {
       files: () => '',
-      readme: () => `<div class="c"><h2>ようこそ。</h2><p>宮崎卓己のポートフォリオです。「ファイル」を${touch ? 'タップ' : 'ダブルクリック'}すると、制作物のフォルダを見られます。</p><p>制作物のフォルダには「課題 → 考えたこと → 作ったもの → いまの状態」の順にファイルが入っています。</p>${touch ? '' : '<p>ウィンドウは画面の左右の端までドラッグすると半分の大きさに、上の端までドラッグすると最大化します。</p>'}<div class="c-btns"><button type="button" class="c-btn c-btn-solid" data-open="files">ファイルを開く</button></div></div>`,
       contact: () => '<div class="c"><h2>面接・カジュアル面談、お気軽にどうぞ。</h2><p class="c-mail"><a href="mailto:' + PROFILE.email + '">' + PROFILE.email + '</a></p><div class="c-btns"><a class="c-btn c-btn-solid" href="mailto:' + PROFILE.email + '">メールを送る</a><a class="c-btn" href="' + PROFILE.github + '" ' + ext + '>GitHub ↗</a></div></div>'
     },
     init: { files: (root) => explorer(root) }
@@ -1262,15 +1311,14 @@ a{ color: inherit; }
     marquee: true,
     contextMenu: [
       { label: 'ファイルを開く', open: 'files' },
-      { label: 'はじめに.txt を開く', open: 'readme' },
       { label: '連絡先を開く', open: 'contact' },
       { sep: true },
       { label: '最新の情報に更新', action: 'refresh' }
     ]
   });
 
-  // 起動の流れが終わったら、タスクバーのボタンから「ファイル」を開く（スマホでは開かない）
-  if (!window.matchMedia('(max-width: 700px)').matches){
+  // 起動の流れが終わったら、タスクバーのボタンから「ファイル」（自己紹介）を開く
+  {
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const launch = () => OS.open('files', { x: .14, y: .05 }, document.querySelector('#dock [data-dock="files"]').getBoundingClientRect());
     if (reduce) launch(); else setTimeout(launch, 650);
